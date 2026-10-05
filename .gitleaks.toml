@@ -1,0 +1,20 @@
+title = "100kmph gitleaks config"
+
+[extend]
+useDefault = true
+
+[[rules]]
+id = "razorpay-key"
+description = "Razorpay key id"
+regex = '''rzp_(live|test)_[A-Za-z0-9]{10,}'''
+tags = ["payments"]
+
+[[rules]]
+id = "database-url-with-password"
+description = "Database URL containing a real-looking password"
+regex = '''postgres(?:ql)?://[^:\s]+:(?!changeme)[^@\s]{6,}@'''
+tags = ["database"]
+
+[allowlist]
+description = "Fake values in the example env file"
+paths = ['''\.env\.example$''']

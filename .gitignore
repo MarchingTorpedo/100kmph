@@ -1,0 +1,42 @@
+# Dependencies and builds
+node_modules/
+.pnpm-store/
+dist/
+build/
+.next/
+.turbo/
+coverage/
+*.tsbuildinfo
+
+# Secrets and environment. Only .env.example is allowed in git.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*service-principal*.json
+*.tfstate
+*.tfstate.*
+.terraform/
+
+# Customer and business data. NEVER commit these (this repo is public).
+data-private/
+exports/
+*.dump
+*.sql.gz
+shopify-export*/
+*.csv
+!**/fixtures/*.csv
+
+# Logs and OS/editor files
+*.log
+npm-debug.log*
+pnpm-debug.log*
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json

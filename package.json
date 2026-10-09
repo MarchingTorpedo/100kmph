@@ -9,6 +9,7 @@
   },
   "scripts": {
     "scan:secrets": "gitleaks detect --source . --config .gitleaks.toml --redact",
-    "snapshot:site": "node scripts/snapshot-site.mjs"
+    "snapshot:site": "node scripts/snapshot-site.mjs",
+    "audit:images": "node scripts/audit-images.mjs"
   }
 }

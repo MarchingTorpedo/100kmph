@@ -128,6 +128,16 @@ async function main() {
     }
   }
 
+  console.log("Images embedded in product descriptions (size charts etc.)...");
+  for (const p of products) {
+    const embedded = [...(p.body_html ?? "").matchAll(/<img[^>]+src=["']([^"']+)["']/gi)].map((m) => m[1]);
+    for (const [i, raw] of embedded.entries()) {
+      const src = raw.startsWith("//") ? "https:" + raw : raw;
+      if (!/^https?:/.test(src)) continue;
+      await downloadImage(src, `images/descriptions/${p.handle}/${String(i + 1).padStart(2, "0")}${imageExt(src)}`);
+    }
+  }
+
   console.log("Brand images from the home page (logo, banners)...");
   const home = await get(BASE + "/");
   const found = new Set();

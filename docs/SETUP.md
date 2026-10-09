@@ -60,3 +60,13 @@ Rules for the snapshot:
 - Never commit it. The images and copy belong to the client, and the repo is public. Keep a private backup (for example a private cloud folder).
 - It covers public catalogue data only. It does not include customers, orders or discount codes; those need the client's Shopify export.
 - Check `manifest.json` afterwards: every saved file lists its source URL and checksum.
+
+After the snapshot, find the photos that are too small or too few:
+
+```bash
+pnpm audit:images
+```
+
+It lists products with fewer than 3 images or only small ones (long side under 1200 px, adjustable with `MIN_LONG_SIDE`). Photos you still have to save by hand (for example banners the feed does not include) go in `data-private/snapshot/images/manual/`. Keep the file name as `<product-handle>-<n>.jpg` where it belongs to a product.
+
+Until the client supplies customer, order and discount data, the demo runs on synthetic data only. Never put real customer data in the repo, fixtures or screenshots.

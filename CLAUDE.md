@@ -24,16 +24,19 @@ Custom commerce, shipment-tracking and ops platform for 100kmph, an Indian motor
 ## Current state
 
 - Scaffold, CI secret scan, Dependabot and docs are pushed.
-- Design system in `packages/design` (`@100kmph/design`): tokens (`src/tokens.ts` is the source; `styles/tokens.css` is generated and checked in CI), self-hosted fonts, motion utilities and Velocity Width, 60 unit tests. CI now runs install, typecheck, test and the tokens check. See `packages/design/README.md`.
+- Design system in `packages/design` (`@100kmph/design`): tokens (`src/tokens.ts` is the source; `styles/tokens.css` is generated and checked in CI), self-hosted fonts, motion utilities and Velocity Width, 74 unit tests. CI now runs install, typecheck, test and the tokens check. See `packages/design/README.md`.
 - Decided by SKY (2026-10-10): palette text colours adjusted so every text pairing meets WCAG AA (light milestone #896300, light route #167769, dark brake #E7565A; fills unchanged). Fonts stay at ~104 KB total, with Archivo split into a 29 KB preloaded text cut and a 33 KB display cut, so the width-axis headings work.
+- Landing preview in `apps/storefront` (Astro 7): scenes 1 (Ignition) and 2 (Crossing) with placeholder poster, copy and rider. Initial JS 3 KB gzip; GSAP loads lazily only where CSS scroll timelines are missing. Lighthouse mobile median (5 runs, 2026-10-10): perf 100, LCP 1.53 s, TBT 15 ms, CLS 0, a11y 100. CI builds it, gates initial JS at 170 KB gzip, and runs 84 Playwright tests (Pixel 7, iPhone 13, desktop; full/reduced/lite). See `apps/storefront/README.md`.
+- Known gaps: the placeholder poster is too low-detail to be the LCP element (the gauge counter is), so re-measure with the real poster; the real poster needs a portrait crop; Style & Layout is ~1.6 s of main-thread time under 4x throttling (suspect the animated counter; not yet investigated); only Chromium is tested.
 - Snapshot of the public shop taken locally: 188 products, 18 collections, 226 sitemap URLs, 691 product images. Many photos are 1024 px or less (stickers and keychains have one image; some hoodies and jerseys are 700 px). The landing fabric scene needs sharper macro photos than the shop has.
 - Instagram (@100kmphofficial) is a possible source of brand photos only if needed, and only with the client's say-so.
 
 ## Next
 
-1. Landing page scenes 1 and 2 (speedometer hero, rider crossing) as a working app on `@100kmph/design`, with a performance check (and real phone-width checks via mobile emulation) in CI.
+1. Get from the client: hero poster (landscape + portrait crop), footage, macro fabric photos (motion-spec section 6). Then re-measure LCP.
 2. One-week commerce spike: cart, Razorpay test payment, GST invoice, COD.
-3. Import the snapshot into the catalogue model; build the redirect map from `urls.json`.
+3. Landing scenes 3 to 7, plus the milestone counter (motion-spec section 5).
+4. Import the snapshot into the catalogue model; build the redirect map from `urls.json`.
 
 ## Working style
 

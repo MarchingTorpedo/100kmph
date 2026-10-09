@@ -8,6 +8,7 @@
     ".": "./src/index.ts",
     "./tokens": "./src/tokens.ts",
     "./motion": "./src/motion.ts",
+    "./boot": "./src/boot.ts",
     "./velocity-width": "./src/velocity-width.ts",
     "./styles/*": "./styles/*",
     "./fonts/*": "./fonts/*"

@@ -15,6 +15,12 @@ export const MAX_HEADINGS = 4;
 export const SMOOTHING_MS = 120;
 /** Scroll pause (ms) after which the heading brakes back to rest. */
 export const IDLE_MS = 100;
+/**
+ * Faster than any human scroll: treated as a jump (anchor link, End key,
+ * scroll restoration, scrollBy), not speed, so headings don't stretch.
+ * Width already saturates at 1000 px/s, so nothing visible is lost.
+ */
+export const JUMP_PX_PER_S = 12000;
 
 const RANGE = fontWidth.max - fontWidth.rest;
 
@@ -94,10 +100,11 @@ export function velocityWidth(headings: HTMLElement[], opts: VelocityWidthOption
     const dy = y - (lastY ?? y);
     lastY = y;
 
-    if (dy !== 0) {
+    const velocity = (dy / Math.max(dt, 1)) * 1000;
+    if (dy !== 0 && Math.abs(velocity) <= JUMP_PX_PER_S) {
       mode = 'follow';
       lastMoveAt = now;
-      target = velocityToWidth((dy / Math.max(dt, 1)) * 1000);
+      target = velocityToWidth(velocity);
     } else if (mode === 'follow' && now - lastMoveAt > IDLE_MS) {
       mode = 'brake';
       brakeFrom = width;

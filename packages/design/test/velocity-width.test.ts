@@ -97,6 +97,19 @@ describe('velocityWidth controller', () => {
     expect(stretch(el)).toBeLessThan(85);
   });
 
+  it('ignores jumps (anchor links, scrollBy) instead of reading them as speed', () => {
+    const h = harness();
+    const el = document.createElement('h2');
+    velocityWidth([el], { win: h.win, env });
+    h.scrollBy(1);
+    h.tick();
+    h.scrollBy(600); // 37,500 px/s in one frame: a jump, not a scroll
+    h.tick();
+    expect(stretch(el)).toBe(100);
+    for (let t = 0; t < 200; t += 16) h.tick();
+    expect(h.running()).toBe(false);
+  });
+
   it('does nothing under reduced motion or lite mode', () => {
     for (const e of [{ reducedMotion: true, lite: false }, { reducedMotion: false, lite: true }]) {
       const h = harness();

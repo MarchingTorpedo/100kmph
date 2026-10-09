@@ -7,12 +7,13 @@ import {
   cubicBezier,
   detectMotion,
   getMotionPreference,
-  motionBootScript,
   onMotionChange,
+  resetMotionPreferenceForTests,
   setMotionPreference,
   staggerDelay,
   stripMotion,
 } from '../src/motion.ts';
+import { motionBootScript } from '../src/boot.ts';
 
 function fakeWindow(opts: { reduce?: boolean; saveData?: boolean; effectiveType?: string; deviceMemory?: number }) {
   return {
@@ -25,6 +26,7 @@ function fakeWindow(opts: { reduce?: boolean; saveData?: boolean; effectiveType?
 }
 
 afterEach(() => {
+  resetMotionPreferenceForTests();
   localStorage.clear();
   vi.restoreAllMocks();
 });
@@ -204,5 +206,51 @@ describe('onMotionChange', () => {
     setMotionPreference('reduced');
     off();
     expect(seen).toEqual([true]);
+  });
+});
+
+describe('blocked storage and other tabs', () => {
+  const quietMedia = () =>
+    (window.matchMedia = (() => ({ matches: false, addEventListener() {}, removeEventListener() {} })) as unknown as typeof window.matchMedia);
+
+  it('the toggle works both ways when storage throws', () => {
+    quietMedia();
+    vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+      throw new Error('blocked');
+    });
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new Error('blocked');
+    });
+    vi.spyOn(Storage.prototype, 'removeItem').mockImplementation(() => {
+      throw new Error('blocked');
+    });
+    const seen: boolean[] = [];
+    const off = onMotionChange((env) => seen.push(env.reducedMotion));
+    setMotionPreference('reduced');
+    expect(getMotionPreference()).toBe('reduced');
+    setMotionPreference('system');
+    expect(getMotionPreference()).toBe('system');
+    off();
+    expect(seen).toEqual([true, false]);
+  });
+
+  it('follows a change made in another tab', () => {
+    quietMedia();
+    const seen: boolean[] = [];
+    const off = onMotionChange((env) => seen.push(env.reducedMotion));
+    window.dispatchEvent(new StorageEvent('storage', { key: '100kmph:motion', newValue: 'reduced' }));
+    expect(getMotionPreference()).toBe('reduced');
+    window.dispatchEvent(new StorageEvent('storage', { key: '100kmph:motion', newValue: null }));
+    off();
+    expect(seen).toEqual([true, false]);
+    expect(getMotionPreference()).toBe('system');
+  });
+
+  it('falls back to addListener on old Safari', () => {
+    const added: unknown[] = [];
+    window.matchMedia = (() => ({ matches: false, addListener: (f: unknown) => added.push(f), removeListener() {} })) as unknown as typeof window.matchMedia;
+    const off = onMotionChange(() => {});
+    off();
+    expect(added).toHaveLength(1);
   });
 });

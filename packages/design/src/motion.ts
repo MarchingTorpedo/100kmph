@@ -13,7 +13,8 @@ export interface MotionEnv {
 
 export type MotionPreference = 'system' | 'reduced';
 
-const PREF_KEY = '100kmph:motion';
+/** localStorage key for the footer toggle's choice (also read by boot.ts). */
+export const MOTION_PREF_KEY = '100kmph:motion';
 
 interface NetworkInformationLike {
   saveData?: boolean;
@@ -22,10 +23,17 @@ interface NetworkInformationLike {
 
 type NavigatorLike = Navigator & { connection?: NetworkInformationLike; deviceMemory?: number };
 
-/** The footer toggle's saved choice. Storage can be missing or blocked. */
+/**
+ * The choice made on this page view. It wins over storage, so the toggle
+ * still works both ways when storage is blocked (private modes, sandboxes).
+ */
+let sessionPref: MotionPreference | undefined;
+
+/** The footer toggle's choice: this page view's, else the saved one. */
 export function getMotionPreference(): MotionPreference {
+  if (sessionPref) return sessionPref;
   try {
-    return localStorage.getItem(PREF_KEY) === 'reduced' ? 'reduced' : 'system';
+    return localStorage.getItem(MOTION_PREF_KEY) === 'reduced' ? 'reduced' : 'system';
   } catch {
     return 'system';
   }
@@ -34,54 +42,57 @@ export function getMotionPreference(): MotionPreference {
 const CHANGE_EVENT = '100kmph:motionchange';
 
 export function setMotionPreference(pref: MotionPreference, root: HTMLElement = document.documentElement): void {
+  sessionPref = pref;
   try {
-    if (pref === 'system') localStorage.removeItem(PREF_KEY);
-    else localStorage.setItem(PREF_KEY, pref);
+    if (pref === 'system') localStorage.removeItem(MOTION_PREF_KEY);
+    else localStorage.setItem(MOTION_PREF_KEY, pref);
   } catch {
-    // Not persisted; still applied below for this page view.
+    // Not persisted; sessionPref keeps it for this page view.
   }
   applyMotionAttributes(root, detectMotion(pref));
-  window.dispatchEvent(new CustomEvent(CHANGE_EVENT, { detail: pref }));
+  window.dispatchEvent(new CustomEvent(CHANGE_EVENT));
 }
 
 /**
- * Calls `cb` with the new environment when the footer toggle or the OS
- * reduced-motion setting changes. `pref` is passed through because storage
- * may be blocked, in which case re-reading it would lose the choice.
- * Returns an unsubscribe function.
+ * Calls `cb` with the new environment when the footer toggle (in this tab or
+ * another) or the OS reduced-motion setting changes. Returns an unsubscribe
+ * function.
  */
 export function onMotionChange(cb: (env: MotionEnv) => void, win: Window = window): () => void {
-  let pref = getMotionPreference();
   const fire = () => {
-    const env = detectMotion(pref, win);
+    const env = detectMotion(getMotionPreference(), win);
     applyMotionAttributes(win.document.documentElement, env);
     cb(env);
   };
-  const onToggle = (e: Event) => {
-    pref = (e as CustomEvent<MotionPreference>).detail;
+  const onStorage = (e: StorageEvent) => {
+    if (e.key !== MOTION_PREF_KEY && e.key !== null) return;
+    sessionPref = e.newValue === 'reduced' ? 'reduced' : 'system';
     fire();
   };
   const mq = win.matchMedia?.('(prefers-reduced-motion: reduce)');
-  mq?.addEventListener('change', fire);
-  win.addEventListener(CHANGE_EVENT, onToggle);
+  // Safari < 14 only has the older addListener API.
+  const listen = (on: boolean) => {
+    if (!mq) return;
+    if (typeof mq.addEventListener === 'function') {
+      if (on) mq.addEventListener('change', fire);
+      else mq.removeEventListener('change', fire);
+    } else if (on) mq.addListener?.(fire);
+    else mq.removeListener?.(fire);
+  };
+  listen(true);
+  win.addEventListener(CHANGE_EVENT, fire);
+  win.addEventListener('storage', onStorage);
   return () => {
-    mq?.removeEventListener('change', fire);
-    win.removeEventListener(CHANGE_EVENT, onToggle);
+    listen(false);
+    win.removeEventListener(CHANGE_EVENT, fire);
+    win.removeEventListener('storage', onStorage);
   };
 }
 
-/**
- * Inline <head> script that sets the same attributes as
- * `applyMotionAttributes(detectMotion())` before first paint, so a saved
- * "reduce motion" choice never flashes animation. Kept in sync with
- * detectMotion by test/motion.test.ts.
- */
-export const motionBootScript =
-  `(function(){var d=document.documentElement,n=navigator,c=n.connection,m=window.matchMedia,` +
-  `r=!!m&&m("(prefers-reduced-motion: reduce)").matches;` +
-  `try{r=r||localStorage.getItem(${JSON.stringify(PREF_KEY)})==="reduced"}catch(e){}` +
-  `if(r)d.dataset.motion="reduced";` +
-  `if(c&&(c.saveData===true||c.effectiveType==="2g"||c.effectiveType==="slow-2g")||n.deviceMemory<=2)d.dataset.lite=""})()`;
+/** Test hook: forget this page view's choice. */
+export function resetMotionPreferenceForTests(): void {
+  sessionPref = undefined;
+}
 
 export function detectMotion(pref: MotionPreference = getMotionPreference(), win: Window = window): MotionEnv {
   const nav = win.navigator as NavigatorLike;

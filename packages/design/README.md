@@ -16,8 +16,16 @@ and section 5 of [`docs/motion-spec.md`](../../docs/motion-spec.md).
 <link rel="preload" href="/fonts/archivo-text-latin.woff2" as="font" type="font/woff2" crossorigin>
 ```
 
+```astro
+---
+import { motionBootScript } from '@100kmph/design/boot';
+---
+<!-- In <head>: sets data-motion / data-lite before first paint. -->
+<script is:inline set:html={motionBootScript} />
+```
+
 ```ts
-import { detectMotion, applyMotionAttributes, animate, staggerDelay } from '@100kmph/design/motion';
+import { detectMotion, applyMotionAttributes, animate, staggerDelay, onMotionChange } from '@100kmph/design/motion';
 import { velocityWidth, settleWidth } from '@100kmph/design/velocity-width';
 
 const env = detectMotion();
@@ -43,7 +51,8 @@ to see the tokens and fonts.
 | File | Contents |
 |---|---|
 | `src/tokens.ts` | Palette (dark/light), type scale, spacing, radii, milestone shape, durations, easings, staggers |
-| `src/motion.ts` | Motion tier (`reducedMotion`, `lite`), footer toggle storage, token-aware WAAPI `animate()`, `staggerDelay()`, `cubicBezier()` |
+| `src/motion.ts` | Motion tier (`reducedMotion`, `lite`), footer toggle state (works with blocked storage, syncs across tabs), `onMotionChange()`, token-aware WAAPI `animate()`, `staggerDelay()`, `cubicBezier()` |
+| `src/boot.ts` | `motionBootScript`: inline head script, kept in sync with `detectMotion` by tests |
 | `src/velocity-width.ts` | Scroll-velocity heading width (landing) and `settleWidth()` title entrance (other pages) |
 | `styles/base.css` | Body defaults, `.display`, `.prose`, `.milestone`, `.ghost-numeral`, `.reveal`, `.press`, route crossfade |
 | `fonts/` | woff2 files and their OFL licences, built by `scripts/build-fonts.py` |

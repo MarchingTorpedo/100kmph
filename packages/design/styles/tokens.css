@@ -1,0 +1,82 @@
+/* Generated from src/tokens.ts by scripts/build-css.ts. Do not edit by hand. */
+
+:root {
+  --font-sans: 'Archivo', 'Archivo Fallback', system-ui, sans-serif;
+  --font-display: 'Archivo Display', 'Archivo', 'Archivo Fallback', system-ui, sans-serif;
+  --font-serif: 'Newsreader', 'Newsreader Fallback', Georgia, serif;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+  --weight-heavy: 800;
+  --width-min: 75;
+  --width-rest: 100;
+  --width-max: 125;
+  --text-xs: 0.875rem;
+  --text-sm: 1rem;
+  --text-md: 1.25rem;
+  --text-lg: 1.5625rem;
+  --text-xl: clamp(1.5625rem, 1.4158rem + 0.6522vw, 1.9375rem);
+  --text-2xl: clamp(1.9375rem, 1.7418rem + 0.8696vw, 2.4375rem);
+  --text-3xl: clamp(2.4375rem, 1.8995rem + 2.3913vw, 3.8125rem);
+  --text-ghost: clamp(6rem, 2.9674rem + 13.4783vw, 13.75rem);
+  --leading-tight: 1.05;
+  --leading-heading: 1.15;
+  --leading-ui: 1.4;
+  --leading-prose: 1.6;
+  --measure: 62ch;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+  --space-9: 6rem;
+  --space-10: 9rem;
+  --radius-none: 0px;
+  --radius-input: 4px;
+  --radius-control: 10px;
+  --radius-pill: 999px;
+  --radius-milestone: 14px 14px 0px 0px;
+  --duration-tick: 90ms;
+  --duration-quick: 160ms;
+  --duration-base: 280ms;
+  --duration-slow: 480ms;
+  --duration-scene: 800ms;
+  --duration-epic: 1400ms;
+  --ease-launch: cubic-bezier(.7,0,.2,1);
+  --ease-brake: cubic-bezier(.05,.7,.1,1);
+  --ease-settle: cubic-bezier(.2,.8,.2,1);
+  --ease-linear: linear;
+  --stagger-s1: 24ms;
+  --stagger-s2: 48ms;
+  --stagger-s3: 80ms;
+}
+
+:root,
+[data-theme="light"] {
+  color-scheme: light;
+  --color-ground: #E8EBEF;
+  --color-surface: #FFFFFF;
+  --color-ink: #151A24;
+  --color-muted: #5A6577;
+  --color-milestone: #B07F00;
+  --color-milestone-fill: #F2B705;
+  --color-on-milestone: #151A24;
+  --color-route: #16796B;
+  --color-brake: #C2262B;
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+  --color-ground: #12161F;
+  --color-surface: #1B212D;
+  --color-ink: #F1F3F6;
+  --color-muted: #8E98A8;
+  --color-milestone: #F2B705;
+  --color-milestone-fill: #F2B705;
+  --color-on-milestone: #151A24;
+  --color-route: #3DB5A4;
+  --color-brake: #E5484D;
+}

@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Design specimen</title>
+<link rel="preload" href="fonts/archivo-text-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="styles/fonts.css">
+<link rel="stylesheet" href="styles/base.css">
+<style>
+  /* Specimen layout only; not part of the design system. */
+  body { padding: var(--space-6) var(--space-4); max-width: 1100px; margin: 0 auto; }
+  section { padding: var(--space-6); margin-block: var(--space-5); border-radius: var(--radius-control); }
+  .row { display: flex; flex-wrap: wrap; gap: var(--space-4); align-items: baseline; }
+  .swatch { width: 120px; font-size: var(--text-xs); }
+  .swatch i { display: block; height: 56px; border-radius: var(--radius-input); margin-bottom: var(--space-2); border: 1px solid color-mix(in srgb, var(--color-ink) 15%, transparent); }
+  .muted { color: var(--color-muted); }
+  .widths span { font-size: var(--text-3xl); }
+  button { font: inherit; font-weight: var(--weight-bold); padding: var(--space-3) var(--space-5); border: 0; border-radius: var(--radius-control); background: var(--color-milestone-fill); color: var(--color-on-milestone); cursor: pointer; }
+  table { border-collapse: collapse; }
+  td { padding: var(--space-1) var(--space-4) var(--space-1) 0; }
+</style>
+</head>
+<body>
+<section data-theme="dark">
+  <p class="muted">Dark theme (landing)</p>
+  <h1 class="display" style="font-size: var(--text-3xl)">Ride at a steady 100</h1>
+  <div class="row widths">
+    <span class="display" style="font-stretch: 75%">100</span>
+    <span class="display" style="font-stretch: 100%">100</span>
+    <span class="display" style="font-stretch: 125%">100</span>
+    <span class="muted">wdth 75 / 100 / 125</span>
+  </div>
+  <p class="prose">Heavyweight 320 GSM cotton, <em>garment-dyed in small batches</em>, with 12 stitches per inch on every seam.</p>
+  <div class="row">
+    <span class="milestone">0 km</span>
+    <button class="press">Shop the collection</button>
+    <span style="color: var(--color-route)">Delivered</span>
+    <span style="color: var(--color-brake)">Payment failed</span>
+  </div>
+</section>
+
+<section data-theme="light">
+  <p class="muted">Light theme (product, cart, account)</p>
+  <h2 style="font-size: var(--text-2xl)">Sample product title</h2>
+  <table>
+    <tr><td>Price</td><td>₹1,899.00</td></tr>
+    <tr><td>Was</td><td>₹2,111.11</td></tr>
+    <tr><td>GST</td><td>₹  227.88</td></tr>
+  </table>
+  <p class="muted">Muted secondary text for sizes and delivery notes.</p>
+  <div class="row">
+    <span class="milestone">New</span>
+    <button class="press">Add to cart</button>
+    <span style="color: var(--color-milestone)">Milestone text (fails AA here)</span>
+    <span style="color: var(--color-route)">In transit</span>
+    <span style="color: var(--color-brake)">Size not available</span>
+  </div>
+</section>
+
+<section data-theme="light" id="swatches"></section>
+<script type="module">
+  const roles = ['ground', 'surface', 'ink', 'muted', 'milestone', 'milestone-fill', 'route', 'brake'];
+  const host = document.getElementById('swatches');
+  for (const theme of ['dark', 'light']) {
+    const row = document.createElement('div');
+    row.className = 'row';
+    row.dataset.theme = theme;
+    row.style.cssText = 'background: var(--color-ground); padding: 16px; margin-bottom: 8px';
+    host.append(row);
+    for (const r of roles) {
+      const v = getComputedStyle(row).getPropertyValue(`--color-${r}`);
+      row.insertAdjacentHTML('beforeend', `<div class="swatch"><i style="background: var(--color-${r})"></i>${theme} ${r}<br><span class="muted">${v}</span></div>`);
+    }
+  }
+</script>
+</body>
+</html>

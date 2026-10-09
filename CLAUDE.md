@@ -24,15 +24,16 @@ Custom commerce, shipment-tracking and ops platform for 100kmph, an Indian motor
 ## Current state
 
 - Scaffold, CI secret scan, Dependabot and docs are pushed.
+- Design system in `packages/design` (`@100kmph/design`): tokens (`src/tokens.ts` is the source; `styles/tokens.css` is generated and checked in CI), self-hosted fonts, motion utilities and Velocity Width, 60 unit tests. CI now runs install, typecheck, test and the tokens check. See `packages/design/README.md`.
+- Open decisions for SKY: (a) four palette text pairings fail WCAG AA (light milestone, light route on ground, dark brake on surface); fixed candidates are in the design README; (b) fonts total ~104 KB vs the spec's ~66 KB because the width axis doubles Archivo; Archivo is split into a 29 KB preloaded text cut and a 33 KB display cut.
 - Snapshot of the public shop taken locally: 188 products, 18 collections, 226 sitemap URLs, 691 product images. Many photos are 1024 px or less (stickers and keychains have one image; some hoodies and jerseys are 700 px). The landing fabric scene needs sharper macro photos than the shop has.
 - Instagram (@100kmphofficial) is a possible source of brand photos only if needed, and only with the client's say-so.
 
 ## Next
 
-1. Design system: tokens, fonts, motion utilities (per `docs/motion-spec.md`).
-2. Landing page scenes 1 and 2 (speedometer hero, rider crossing) as a working app, with a performance check in CI.
-3. One-week commerce spike: cart, Razorpay test payment, GST invoice, COD.
-4. Import the snapshot into the catalogue model; build the redirect map from `urls.json`.
+1. Landing page scenes 1 and 2 (speedometer hero, rider crossing) as a working app on `@100kmph/design`, with a performance check (and real phone-width checks via mobile emulation) in CI.
+2. One-week commerce spike: cart, Razorpay test payment, GST invoice, COD.
+3. Import the snapshot into the catalogue model; build the redirect map from `urls.json`.
 
 ## Working style
 

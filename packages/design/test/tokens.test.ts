@@ -11,15 +11,10 @@ const TEXT_ROLES: ColorRole[] = ['ink', 'muted', 'milestone', 'route', 'brake'];
 const BACKGROUNDS: ColorRole[] = ['ground', 'surface'];
 
 /**
- * Pairs from the spec palette that fail WCAG AA for body text. Kept visible
- * here until the palette is decided; see packages/design/README.md.
+ * Pairs that fail WCAG AA for body text. Empty since the palette was adjusted
+ * (see packages/design/README.md). Add a name here only as a deliberate exception.
  */
-const KNOWN_FAILURES = new Set([
-  'light milestone on ground',
-  'light milestone on surface',
-  'light route on ground',
-  'dark brake on surface',
-]);
+const KNOWN_FAILURES = new Set<string>();
 
 describe('palette contrast (WCAG 2.x)', () => {
   const cases = themes.flatMap((theme: Theme) =>

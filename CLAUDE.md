@@ -25,7 +25,7 @@ Custom commerce, shipment-tracking and ops platform for 100kmph, an Indian motor
 
 - Scaffold, CI secret scan, Dependabot and docs are pushed.
 - Design system in `packages/design` (`@100kmph/design`): tokens (`src/tokens.ts` is the source; `styles/tokens.css` is generated and checked in CI), self-hosted fonts, motion utilities and Velocity Width, 60 unit tests. CI now runs install, typecheck, test and the tokens check. See `packages/design/README.md`.
-- Open decisions for SKY: (a) four palette text pairings fail WCAG AA (light milestone, light route on ground, dark brake on surface); fixed candidates are in the design README; (b) fonts total ~104 KB vs the spec's ~66 KB because the width axis doubles Archivo; Archivo is split into a 29 KB preloaded text cut and a 33 KB display cut.
+- Decided by SKY (2026-10-10): palette text colours adjusted so every text pairing meets WCAG AA (light milestone #896300, light route #167769, dark brake #E7565A; fills unchanged). Fonts stay at ~104 KB total, with Archivo split into a 29 KB preloaded text cut and a 33 KB display cut, so the width-axis headings work.
 - Snapshot of the public shop taken locally: 188 products, 18 collections, 226 sitemap URLs, 691 product images. Many photos are 1024 px or less (stickers and keychains have one image; some hoodies and jerseys are 700 px). The landing fabric scene needs sharper macro photos than the shop has.
 - Instagram (@100kmphofficial) is a possible source of brand photos only if needed, and only with the client's say-so.
 

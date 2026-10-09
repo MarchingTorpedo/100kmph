@@ -70,19 +70,21 @@ Display headings use weight 800 only. That was my choice; the spec doesn't name 
 Subset: Google's Latin set plus ₹ (U+20B9). Features kept: kerning,
 ligatures, `tnum`, `lnum`, `case`.
 
-## Open: palette contrast
+## Palette contrast
 
-The spec says the palette was checked at 4.5:1. `test/tokens.test.ts` finds
-these text pairings below WCAG AA (4.5:1):
+The spec's palette was reported as checked at 4.5:1, but `test/tokens.test.ts`
+found four text pairings below WCAG AA. They were adjusted to the nearest
+same-hue value that passes (decided by SKY, 2026-10-10):
 
-| Pairing | Ratio | Nearest same-hue value that passes |
-|---|---|---|
-| light `milestone` #B07F00 on ground / surface | 2.99 / 3.57 | #896300 (4.56 / 5.46) |
-| light `route` #16796B on ground | 4.41 | #167769 (4.53) |
-| dark `brake` #E5484D on surface | 4.12 | #E7565A (4.51 / 5.06) |
+| Token | Spec value | Now | Ratio on ground / surface |
+|---|---|---|---|
+| light `milestone` | #B07F00 | #896300 | 4.56 / 5.46 |
+| light `route` | #16796B | #167769 | 4.53 on ground |
+| dark `brake` | #E5484D | #E7565A | 4.51 / 5.06 |
 
-Until decided, don't set body-size text in light `milestone`. It is fine as a
-fill (`milestone-fill` behind `on-milestone` text is 9.58:1).
+`milestone-fill` (#F2B705) is unchanged. It is a fill behind `on-milestone`
+text (9.58:1), not a text colour. The test file keeps an empty
+`KNOWN_FAILURES` set; add a name to it only as a deliberate exception.
 
 ## Unverified
 

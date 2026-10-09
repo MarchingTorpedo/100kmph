@@ -61,10 +61,10 @@
   --color-surface: #FFFFFF;
   --color-ink: #151A24;
   --color-muted: #5A6577;
-  --color-milestone: #B07F00;
+  --color-milestone: #896300;
   --color-milestone-fill: #F2B705;
   --color-on-milestone: #151A24;
-  --color-route: #16796B;
+  --color-route: #167769;
   --color-brake: #C2262B;
 }
 
@@ -78,5 +78,5 @@
   --color-milestone-fill: #F2B705;
   --color-on-milestone: #151A24;
   --color-route: #3DB5A4;
-  --color-brake: #E5484D;
+  --color-brake: #E7565A;
 }

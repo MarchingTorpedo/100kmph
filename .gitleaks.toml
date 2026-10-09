@@ -12,8 +12,11 @@ tags = ["payments"]
 [[rules]]
 id = "database-url-with-password"
 description = "Database URL containing a real-looking password"
-regex = '''postgres(?:ql)?://[^:\s]+:(?!changeme)[^@\s]{6,}@'''
+regex = '''postgres(?:ql)?://[^:\s]+:[^@\s]{6,}@'''
 tags = ["database"]
+# Go regexp has no lookahead, so the placeholder password is allowlisted here.
+[rules.allowlist]
+regexes = ['''://[^:\s]+:changeme@''']
 
 [allowlist]
 description = "Fake values in the example env file"

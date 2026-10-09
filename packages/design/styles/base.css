@@ -1,0 +1,125 @@
+/*
+ * Base styles and motion utilities. Import after tokens.css and fonts.css.
+ *
+ * Transform-based motion is declared only under prefers-reduced-motion:
+ * no-preference and without `data-motion="reduced"` on <html> (the footer
+ * toggle, see src/motion.ts). Otherwise only opacity and colour change.
+ */
+
+html {
+  background: var(--color-ground);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-weight: var(--weight-medium);
+  font-size: 100%;
+  line-height: var(--leading-ui);
+  font-variant-numeric: tabular-nums lining-nums;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  font-size: var(--text-sm);
+}
+
+/* Nested themes: re-resolve colours, which would otherwise inherit the outer theme's. */
+[data-theme] {
+  background-color: var(--color-ground);
+  color: var(--color-ink);
+}
+
+h1,
+h2,
+h3 {
+  font-weight: var(--weight-heavy);
+  line-height: var(--leading-heading);
+  font-stretch: 100%;
+}
+
+/* Display headings: the width axis lives on this cut only. */
+.display {
+  font-family: var(--font-display);
+  font-weight: var(--weight-heavy);
+  line-height: var(--leading-tight);
+  font-stretch: 100%;
+}
+
+.ghost-numeral {
+  font-family: var(--font-display);
+  font-weight: var(--weight-heavy);
+  font-size: var(--text-ghost);
+  line-height: 1;
+  color: var(--color-ink);
+  opacity: 0.06;
+  user-select: none;
+}
+
+/* Fabric and craft copy. */
+.prose {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: var(--text-md);
+  line-height: var(--leading-prose);
+  max-width: var(--measure);
+}
+
+/* Tags and the counter: top corners 14, bottom 0. */
+.milestone {
+  border-radius: var(--radius-milestone);
+  background: var(--color-milestone-fill);
+  color: var(--color-on-milestone);
+  font-weight: var(--weight-bold);
+  padding: var(--space-1) var(--space-3);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-milestone);
+  outline-offset: 2px;
+}
+
+/* Route changes: 160 ms crossfade, no slides. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: var(--duration-quick);
+  animation-timing-function: var(--ease-settle);
+}
+
+/* Entrance: opacity always; the rise only when motion is OK. Set --i for stagger. */
+@keyframes kmph-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes kmph-rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+.reveal {
+  animation: kmph-fade-in var(--duration-base) var(--ease-brake) both;
+  animation-delay: calc(var(--i, 0) * var(--stagger, var(--stagger-s2)));
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  :root:not([data-motion='reduced']) .reveal {
+    animation-name: kmph-rise-in;
+  }
+
+  /* Button press: 0.97 in `tick`, release with `settle`. */
+  :root:not([data-motion='reduced']) .press {
+    transition: transform var(--duration-quick) var(--ease-settle);
+  }
+
+  :root:not([data-motion='reduced']) .press:active {
+    transform: scale(0.97);
+    transition-duration: var(--duration-tick);
+  }
+
+  :root:not([data-motion='reduced']) {
+    scroll-behavior: smooth;
+  }
+}

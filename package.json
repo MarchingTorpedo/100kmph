@@ -5,11 +5,14 @@
   "description": "Commerce, shipment tracking and ops platform for an apparel brand",
   "packageManager": "pnpm@10.28.0",
   "engines": {
-    "node": ">=22"
+    "node": ">=22.22.2"
   },
   "scripts": {
     "scan:secrets": "gitleaks detect --source . --config .gitleaks.toml --redact",
     "snapshot:site": "node scripts/snapshot-site.mjs",
-    "audit:images": "node scripts/audit-images.mjs"
+    "audit:images": "node scripts/audit-images.mjs",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r test",
+    "check": "pnpm -r check"
   }
 }

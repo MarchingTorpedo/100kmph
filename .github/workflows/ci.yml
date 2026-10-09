@@ -36,7 +36,35 @@ jobs:
       - run: pnpm test
       # Fails if packages/design/styles/tokens.css is stale.
       - run: pnpm check
+      - name: Build storefront
+        run: pnpm --filter @100kmph/storefront build
+      # Fails if any page's initial JS exceeds 170 KB gzip (docs/motion-spec.md).
+      - name: JS budget
+        run: pnpm --filter @100kmph/storefront check:budget
 
-  # Added once the first app exists: lint, build, and Lighthouse CI against
-  # the performance budget in docs/motion-spec.md.
+  e2e:
+    name: Landing page at phone width (Playwright)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Install Chromium
+        run: pnpm --filter @100kmph/storefront exec playwright install --with-deps chromium
+      # Pixel 7, iPhone 13 and desktop; full, reduced and lite motion modes.
+      - name: Run e2e tests
+        run: pnpm --filter @100kmph/storefront test:e2e
+      - name: Upload traces on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-traces
+          path: apps/storefront/test-results/
+          retention-days: 7
+
+  # Still to add: lint, and Lighthouse CI against the LCP budget.
   # TODO: pin third-party actions to commit SHAs before the first release.

@@ -45,3 +45,18 @@ Use small commits with clear messages (`feat:`, `fix:`, `docs:`, `chore:`). A st
 ## 5. Turn on in GitHub (once)
 
 Settings, Code security: enable secret scanning, push protection, Dependabot alerts and private vulnerability reporting. Settings, Rules: protect `main` (require pull request and passing checks, block force pushes).
+
+## 6. Snapshot the current shop (products, images, URLs)
+
+The client's catalogue is public on 100kmph.com. Run this on your own laptop (it needs normal internet access):
+
+```bash
+pnpm snapshot:site
+```
+
+It saves products, variants, collections, the sitemap URL list (for redirects), page HTML and images into `data-private/snapshot/`, which git ignores. It is slow on purpose (about 2 requests per second).
+
+Rules for the snapshot:
+- Never commit it. The images and copy belong to the client, and the repo is public. Keep a private backup (for example a private cloud folder).
+- It covers public catalogue data only. It does not include customers, orders or discount codes; those need the client's Shopify export.
+- Check `manifest.json` afterwards: every saved file lists its source URL and checksum.

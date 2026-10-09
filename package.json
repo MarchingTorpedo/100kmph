@@ -8,6 +8,7 @@
     "node": ">=22"
   },
   "scripts": {
-    "scan:secrets": "gitleaks detect --source . --config .gitleaks.toml --redact"
+    "scan:secrets": "gitleaks detect --source . --config .gitleaks.toml --redact",
+    "snapshot:site": "node scripts/snapshot-site.mjs"
   }
 }

@@ -1,0 +1,27 @@
+---
+// Generic rider-and-motorcycle silhouette, facing right. Deliberately
+// abstract: no real make, model, livery or logo (motion-spec risk 6).
+---
+
+<svg class="rider" viewBox="0 0 400 200" width="400" height="200" aria-hidden="true" focusable="false">
+  <g fill="currentColor">
+    <!-- Wheels: tyre rings with hubs -->
+    <path fill-rule="evenodd" d="M85 112a40 40 0 1 1 0 80a40 40 0 1 1 0-80zm0 10a30 30 0 1 0 0 60a30 30 0 1 0 0-60z" />
+    <path fill-rule="evenodd" d="M318 112a40 40 0 1 1 0 80a40 40 0 1 1 0-80zm0 10a30 30 0 1 0 0 60a30 30 0 1 0 0-60z" />
+    <circle cx="85" cy="152" r="7" />
+    <circle cx="318" cy="152" r="7" />
+    <!-- Body: tail, seat, tank, fairing, engine -->
+    <path d="M96 112 L150 96 L206 94 L232 80 L266 82 L296 66 L306 98 L276 122 L246 146 L176 152 L136 140 Z" />
+  </g>
+  <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Swingarm, fork, exhaust -->
+    <path d="M85 152 L176 142" stroke-width="9" />
+    <path d="M286 96 L318 152" stroke-width="8" />
+    <path d="M140 138 L70 126" stroke-width="7" />
+    <!-- Rider: torso, arm, leg -->
+    <path d="M172 96 L214 60" stroke-width="26" />
+    <path d="M218 66 L270 86" stroke-width="10" />
+    <path d="M176 100 L226 112 L206 140" stroke-width="15" />
+  </g>
+  <circle cx="236" cy="46" r="19" fill="currentColor" />
+</svg>

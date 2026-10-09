@@ -1,0 +1,23 @@
+---
+import Base from '../layouts/Base.astro';
+import Crossing from '../components/Crossing.astro';
+import Footer from '../components/Footer.astro';
+import Ignition from '../components/Ignition.astro';
+import UpNext from '../components/UpNext.astro';
+---
+
+<Base
+  title="100kmph: preview"
+  description="Preview of the 100kmph landing page: scenes 1 and 2 with placeholder art."
+  theme="dark"
+>
+  <main>
+    <Ignition />
+    <Crossing />
+    <UpNext />
+  </main>
+  <Footer />
+  <script>
+    import '../scripts/landing.ts';
+  </script>
+</Base>

@@ -1,0 +1,34 @@
+---
+import { motionBootScript } from '@100kmph/design/boot';
+import archivoText from '@100kmph/design/fonts/archivo-text-latin.woff2?url';
+import '@100kmph/design/styles/tokens.css';
+import '@100kmph/design/styles/fonts.css';
+import '@100kmph/design/styles/base.css';
+
+interface Props {
+  title: string;
+  description: string;
+  theme?: 'dark' | 'light';
+}
+
+const { title, description, theme = 'light' } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en-IN" data-theme={theme}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="theme-color" content={theme === 'dark' ? '#12161F' : '#E8EBEF'} />
+    <!-- Sets data-motion / data-lite before first paint (see @100kmph/design motion.ts). -->
+    <script is:inline set:html={motionBootScript} />
+    <link rel="preload" href={archivoText} as="font" type="font/woff2" crossorigin />
+    <slot name="head" />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

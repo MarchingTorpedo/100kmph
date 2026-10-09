@@ -1,0 +1,27 @@
+{
+  "name": "@100kmph/storefront",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "typecheck": "astro-check",
+    "test": "node --test scripts/check-budget.test.mjs",
+    "check:budget": "node scripts/check-budget.mjs",
+    "test:e2e": "playwright test",
+    "poster:placeholder": "node scripts/make-placeholder-poster.mjs"
+  },
+  "dependencies": {
+    "@100kmph/design": "workspace:*",
+    "astro": "^7.3.8",
+    "gsap": "^3.15.0",
+    "sharp": "^0.35.5"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@playwright/test": "^1.64.0",
+    "typescript": "^6.0.3"
+  }
+}

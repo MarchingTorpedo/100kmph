@@ -1,0 +1,248 @@
+/*
+ * Scene 1, Ignition. The base rules are the static frame (needle at 100,
+ * headline visible). Animation is added only when motion is allowed.
+ *
+ * Timeline (ms): needle + counter 0-1200 (launch) | light sweep 980-1400
+ * | gauge dissolves 1100-1400 | headline 1120-1400 (brake). Caps at `epic`.
+ */
+
+@property --kmph {
+  syntax: '<integer>';
+  inherits: true;
+  initial-value: 100;
+}
+
+.ignition {
+  position: relative;
+  display: grid;
+  min-height: 100svh;
+  overflow: clip;
+  isolation: isolate;
+}
+
+.ignition__poster,
+.ignition__poster img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -2;
+}
+
+.ignition__shade {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  /* Dense at the bottom so the lede keeps 4.5:1 over a bright road. */
+  background: linear-gradient(to top, rgb(18 22 31 / 0.94) 0%, rgb(18 22 31 / 0.88) 35%, rgb(18 22 31 / 0.1) 100%);
+}
+
+.ignition__content {
+  display: grid;
+  align-content: end;
+  justify-items: start;
+  gap: var(--space-6);
+  padding: var(--space-9) var(--space-4) var(--space-8);
+  width: min(100%, 1120px);
+  margin-inline: auto;
+  box-sizing: border-box;
+}
+
+.ignition__title {
+  font-size: var(--text-3xl);
+  margin: 0;
+  max-width: 14ch;
+  text-wrap: balance;
+}
+
+.ignition__lede {
+  margin: var(--space-3) 0 0;
+  font-size: var(--text-md);
+  color: var(--color-muted);
+}
+
+/* Gauge */
+.gauge {
+  display: grid;
+  justify-items: center;
+  width: min(72vw, 320px);
+}
+
+.gauge__dial {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.gauge__track {
+  fill: none;
+  stroke: rgb(241 243 246 / 0.16);
+  stroke-width: 6;
+}
+
+.gauge__progress {
+  fill: none;
+  stroke: var(--color-milestone);
+  stroke-width: 6;
+  stroke-dashoffset: 0;
+}
+
+.gauge__tick {
+  stroke: rgb(241 243 246 / 0.45);
+  stroke-width: 1.5;
+}
+
+.gauge__tick--major {
+  stroke: var(--color-ink);
+  stroke-width: 2.5;
+}
+
+.gauge__label {
+  fill: var(--color-ink);
+  font: var(--weight-semibold) 12px var(--font-sans);
+}
+
+.gauge__needle {
+  transform-box: view-box;
+  transform-origin: 120px 120px;
+  rotate: 180deg;
+  stroke: var(--color-milestone);
+  stroke-width: 4;
+  stroke-linecap: round;
+  fill: var(--color-milestone);
+}
+
+.gauge__readout {
+  margin: var(--space-2) 0 0;
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+
+.gauge__count::after {
+  /* Fallback 100 where @property is unsupported (var would be invalid). */
+  counter-reset: kmph var(--kmph, 100);
+  content: counter(kmph);
+  font-family: var(--font-display);
+  font-weight: var(--weight-heavy);
+  font-size: var(--text-2xl);
+  line-height: 1;
+}
+
+.gauge__unit {
+  color: var(--color-ink);
+  font-size: var(--text-xs);
+}
+
+.ignition__sweep {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(
+    100deg,
+    transparent 30%,
+    rgb(242 183 5 / 0) 38%,
+    rgb(242 183 5 / 0.5) 50%,
+    rgb(242 183 5 / 0) 62%,
+    transparent 70%
+  );
+}
+
+/* Reduced motion and the footer toggle: headline fades in, nothing moves. */
+.ignition__copy {
+  animation: kmph-fade-in var(--duration-base) var(--ease-brake) both;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Out of flow: it dissolves over the poster and takes no layout space. */
+  :root:not([data-motion='reduced']) .gauge {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    height: fit-content;
+    animation: ignition-dissolve 300ms var(--ease-settle) 1100ms both;
+    pointer-events: none;
+  }
+
+  :root:not([data-motion='reduced']) .gauge__needle {
+    animation: ignition-needle 1200ms var(--ease-launch) both;
+  }
+
+  :root:not([data-motion='reduced']) .gauge__progress {
+    animation: ignition-progress 1200ms var(--ease-launch) both;
+  }
+
+  :root:not([data-motion='reduced']) .gauge__count {
+    animation: ignition-count 1200ms var(--ease-launch) both;
+  }
+
+  :root:not([data-motion='reduced']) .ignition__sweep {
+    animation: ignition-sweep 420ms var(--ease-launch) 980ms both;
+  }
+
+  :root:not([data-motion='reduced']) .ignition__copy {
+    animation: ignition-rise var(--duration-base) var(--ease-brake) 1120ms both;
+  }
+}
+
+/* Played once per visit: a later mode change (data-ignited) shows the end state. */
+:root[data-ignited] .gauge__needle,
+:root[data-ignited] .gauge__progress,
+:root[data-ignited] .gauge__count,
+:root[data-ignited] .ignition__sweep,
+:root[data-ignited] .ignition__copy {
+  animation: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  :root:not([data-motion='reduced'])[data-ignited] .gauge {
+    animation: none;
+    opacity: 0;
+  }
+}
+
+@keyframes ignition-needle {
+  from {
+    rotate: 0deg;
+  }
+}
+
+@keyframes ignition-progress {
+  from {
+    stroke-dashoffset: var(--arc);
+  }
+}
+
+@keyframes ignition-count {
+  from {
+    --kmph: 0;
+  }
+}
+
+@keyframes ignition-sweep {
+  from {
+    opacity: 1;
+    translate: -100% 0;
+  }
+  to {
+    opacity: 1;
+    translate: 100% 0;
+  }
+}
+
+@keyframes ignition-dissolve {
+  to {
+    opacity: 0;
+    scale: 1.04;
+  }
+}
+
+@keyframes ignition-rise {
+  from {
+    opacity: 0;
+    translate: 0 16px;
+  }
+}

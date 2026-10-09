@@ -1,0 +1,6 @@
+# Astro and test output
+.astro/
+dist-*/
+test-results/
+playwright-report/
+blob-report/

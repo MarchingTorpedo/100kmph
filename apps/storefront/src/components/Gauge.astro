@@ -1,0 +1,50 @@
+---
+// Speedometer for scene 1. Decorative (aria-hidden): the headline carries the
+// meaning. The 0-180 degree arc maps to 0-100 km/h. Final state (needle at
+// 100) is the default; styles/ignition.css animates from 0 when motion is on.
+const CX = 120;
+const CY = 120;
+const R = 96;
+
+const ticks = Array.from({ length: 21 }, (_, i) => {
+  const major = i % 2 === 0;
+  const a = Math.PI * (1 - i / 20);
+  const r0 = R - (major ? 14 : 8);
+  return {
+    x1: +(CX + r0 * Math.cos(a)).toFixed(2),
+    y1: +(CY - r0 * Math.sin(a)).toFixed(2),
+    x2: +(CX + R * Math.cos(a)).toFixed(2),
+    y2: +(CY - R * Math.sin(a)).toFixed(2),
+    major,
+  };
+});
+
+// 0 and 100 sit below the baseline so the needle never crosses them at rest.
+const labels = [
+  { v: 0, x: CX - R, y: CY + 20 },
+  { v: 50, x: CX, y: CY - R + 34 },
+  { v: 100, x: CX + R, y: CY + 20 },
+];
+
+// Half-circle arc length, for the progress stroke.
+const ARC = +(Math.PI * R).toFixed(2);
+---
+
+<div class="gauge" aria-hidden="true">
+  <svg class="gauge__dial" viewBox="0 0 240 144" width="240" height="144">
+    <path class="gauge__track" d={`M ${CX - R} ${CY} A ${R} ${R} 0 0 1 ${CX + R} ${CY}`} />
+    <path
+      class="gauge__progress"
+      d={`M ${CX - R} ${CY} A ${R} ${R} 0 0 1 ${CX + R} ${CY}`}
+      style={`--arc: ${ARC}`}
+      stroke-dasharray={ARC}
+    />
+    {ticks.map((t) => <line class:list={['gauge__tick', { 'gauge__tick--major': t.major }]} x1={t.x1} y1={t.y1} x2={t.x2} y2={t.y2} />)}
+    {labels.map((l) => <text class="gauge__label" x={l.x} y={l.y} text-anchor="middle">{l.v}</text>)}
+    <g class="gauge__needle">
+      <line x1={CX} y1={CY} x2={CX - R + 10} y2={CY} />
+      <circle cx={CX} cy={CY} r="7" />
+    </g>
+  </svg>
+  <p class="gauge__readout"><span class="gauge__count"></span><span class="gauge__unit">km/h</span></p>
+</div>

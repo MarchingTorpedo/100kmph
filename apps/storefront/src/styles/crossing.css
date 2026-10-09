@@ -1,0 +1,185 @@
+/*
+ * Scene 2, The crossing. Base rules = static frame (rider parked mid-frame,
+ * numeral at rest width, no pinning).
+ *
+ * Full motion: the section is 160vh with a sticky stage one viewport tall, so
+ * the stage is pinned for 60vh. The scrub runs for 150vh centred on the pin
+ * (cover 55vh to cover 205vh), which makes the pin the middle 40%.
+ *
+ * The stage is two rows (track, then copy) so the rider can never sit on top
+ * of the headline, at any viewport height or zoom level.
+ */
+
+.crossing {
+  position: relative;
+  background: var(--color-ground);
+}
+
+.crossing__stage {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  min-height: 100svh;
+  overflow: clip;
+}
+
+.crossing__track {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: clamp(180px, 34vw, 360px);
+  container-type: inline-size;
+}
+
+.crossing__numeral {
+  grid-area: 1 / 1;
+  margin: 0;
+  opacity: 0.09;
+  font-stretch: 100%;
+  contain: layout paint;
+}
+
+/* Generated content, because the numeral is pure decoration: WCAG exempts it
+   from contrast, but checkers such as axe still test real text nodes. */
+.crossing__numeral::before {
+  content: attr(data-numeral);
+}
+
+.crossing__vehicle {
+  position: absolute;
+  left: 0;
+  bottom: 6%;
+  width: clamp(200px, 46cqw, 520px);
+  translate: calc(50cqw - 50%) 0;
+  color: var(--color-ink);
+}
+
+.crossing__vehicle .rider {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Streaks trail behind (to the left of) the rider. */
+.crossing__streaks {
+  position: absolute;
+  right: 72%;
+  top: 0;
+  width: 80%;
+  height: 80%;
+  color: var(--color-milestone);
+  opacity: 0;
+}
+
+.crossing__copy {
+  width: min(100%, 1120px);
+  margin-inline: auto;
+  padding: var(--space-5) var(--space-4) var(--space-7);
+  box-sizing: border-box;
+}
+
+.crossing__title {
+  margin: 0;
+  font-size: var(--text-2xl);
+}
+
+.crossing__lede {
+  margin: var(--space-2) 0 0;
+  color: var(--color-muted);
+  max-width: 40ch;
+}
+
+/* Full motion = OS allows motion, no footer toggle, not lite. */
+@media (prefers-reduced-motion: no-preference) {
+  :root:not([data-motion='reduced']):not([data-lite]) .crossing {
+    height: 160vh;
+    view-timeline: --crossing block;
+  }
+
+  :root:not([data-motion='reduced']):not([data-lite]) .crossing__stage {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    min-height: 0;
+  }
+
+  :root:not([data-motion='reduced']) .crossing__vehicle {
+    will-change: translate;
+  }
+
+  :root:not([data-motion='reduced']):not([data-lite]) .crossing__streaks {
+    opacity: 0.9;
+  }
+
+  /*
+   * Longhands only, on purpose: the build's CSS minifier (lightningcss 1.33)
+   * folds `animation` + `animation-timeline` into one shorthand, which is
+   * invalid (the shorthand can only reset the timeline), so Chrome drops it.
+   * `data-scrub="gsap"` (set by scripts/landing.ts) hands the scene to GSAP.
+   */
+  @supports (animation-timeline: view()) {
+    :root:not([data-motion='reduced']):not([data-lite]) .crossing:not([data-scrub='gsap']) .crossing__vehicle,
+    :root:not([data-motion='reduced']):not([data-lite]) .crossing:not([data-scrub='gsap']) .crossing__streaks,
+    :root:not([data-motion='reduced']):not([data-lite]) .crossing:not([data-scrub='gsap']) .crossing__numeral {
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: --crossing;
+      animation-range: cover 55vh cover 205vh;
+    }
+
+    :root:not([data-motion='reduced']):not([data-lite]) .crossing:not([data-scrub='gsap']) .crossing__vehicle {
+      animation-name: crossing-ride;
+    }
+
+    :root:not([data-motion='reduced']):not([data-lite]) .crossing:not([data-scrub='gsap']) .crossing__streaks {
+      animation-name: crossing-streaks;
+    }
+
+    :root:not([data-motion='reduced']):not([data-lite]) .crossing:not([data-scrub='gsap']) .crossing__numeral {
+      animation-name: crossing-stretch;
+    }
+  }
+
+  /* Lite mode: one 600 ms translate on enter (scripts/landing.ts adds the classes). */
+  :root[data-lite]:not([data-motion='reduced']) .crossing--armed .crossing__vehicle {
+    translate: -100% 0;
+  }
+
+  /* Transition only on the way in, so it can never play backwards. */
+  :root[data-lite]:not([data-motion='reduced']) .crossing--armed.crossing--in .crossing__vehicle {
+    translate: calc(50cqw - 50%) 0;
+    transition: translate 600ms var(--ease-brake);
+  }
+}
+
+@keyframes crossing-ride {
+  from {
+    translate: -100% 0;
+  }
+  to {
+    translate: 100cqw 0;
+  }
+}
+
+@keyframes crossing-streaks {
+  0% {
+    opacity: 0.9;
+  }
+  60% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* The numeral's width axis peaks as the rider passes the middle. */
+@keyframes crossing-stretch {
+  0%,
+  100% {
+    font-stretch: 100%;
+  }
+  50% {
+    font-stretch: 125%;
+  }
+}

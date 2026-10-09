@@ -1,0 +1,41 @@
+---
+// Scene 2, The crossing (docs/motion-spec.md section 3). A rider silhouette
+// crosses a ghost "100" whose width axis stretches as the rider passes the
+// middle. Scrubbed to scroll over 1.5 viewport heights, pinned (CSS sticky)
+// for the middle 40%. CSS scroll-driven animations first; GSAP fallback in
+// scripts/crossing-gsap.ts. Static fallback: rider parked mid-frame.
+import Rider from './Rider.astro';
+import '../styles/crossing.css';
+
+const streaks = [
+  { y: 52, x: 70, w: 230, o: 0.9 },
+  { y: 88, x: 20, w: 300, o: 0.55 },
+  { y: 122, x: 110, w: 200, o: 0.8 },
+  { y: 150, x: 0, w: 260, o: 0.4 },
+  { y: 176, x: 60, w: 220, o: 0.65 },
+];
+---
+
+<section class="crossing" id="crossing" aria-labelledby="crossing-title">
+  <div class="crossing__stage">
+    <div class="crossing__track">
+      <div class="ghost-numeral crossing__numeral" data-numeral="100" aria-hidden="true"></div>
+      <div class="crossing__vehicle" aria-hidden="true">
+        <svg class="crossing__streaks" viewBox="0 0 320 200" preserveAspectRatio="none" focusable="false">
+          <defs>
+            <linearGradient id="streak-fade" x1="0" x2="1">
+              <stop offset="0" stop-color="currentColor" stop-opacity="0" />
+              <stop offset="1" stop-color="currentColor" stop-opacity="1" />
+            </linearGradient>
+          </defs>
+          {streaks.map((s) => <rect x={s.x} y={s.y} width={s.w} height="3" rx="1.5" fill="url(#streak-fade)" opacity={s.o} />)}
+        </svg>
+        <Rider />
+      </div>
+    </div>
+    <div class="crossing__copy">
+      <h2 id="crossing-title" class="display crossing__title" data-velocity>Measured against 100</h2>
+      <p class="crossing__lede">Every number we print is a fact: fabric weight, stitches, kilometres.</p>
+    </div>
+  </div>
+</section>

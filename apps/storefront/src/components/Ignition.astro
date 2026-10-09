@@ -1,0 +1,31 @@
+---
+// Scene 1, Ignition (docs/motion-spec.md section 3). CSS only: the needle
+// sweeps 0 to 100, a milestone-yellow light sweeps across, the gauge
+// dissolves and the headline settles in. Static fallback = the markup as is.
+import { Picture } from 'astro:assets';
+import poster from '../assets/poster-placeholder.jpg';
+import Gauge from './Gauge.astro';
+import '../styles/ignition.css';
+---
+
+<section class="ignition" aria-labelledby="ignition-title">
+  <Picture
+    class="ignition__poster"
+    src={poster}
+    formats={['avif', 'webp']}
+    widths={[640, 960, 1280]}
+    sizes="100vw"
+    alt=""
+    loading="eager"
+    fetchpriority="high"
+  />
+  <div class="ignition__shade"></div>
+  <div class="ignition__sweep" aria-hidden="true"></div>
+  <div class="ignition__content">
+    <Gauge />
+    <div class="ignition__copy">
+      <h1 id="ignition-title" class="display ignition__title" data-velocity>Built for the road at a steady 100</h1>
+      <p class="ignition__lede">Motorcycle lifestyle clothing from Pune.</p>
+    </div>
+  </div>
+</section>

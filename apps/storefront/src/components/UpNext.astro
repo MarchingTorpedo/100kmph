@@ -1,0 +1,38 @@
+---
+// Placeholder for scenes 3-7 (not built yet). It also gives the crossing's
+// scroll scrub room to finish, so the numeral and headline come back to rest
+// at width 100 instead of stopping mid-stretch at the end of the page.
+---
+
+<section class="up-next" aria-labelledby="up-next-title">
+  <h2 id="up-next-title" class="up-next__title">Up next in this preview</h2>
+  <ol class="up-next__list">
+    <li>Gear shift</li>
+    <li>Under the lens</li>
+    <li>Collections</li>
+    <li>Follow your jacket</li>
+    <li>Finish</li>
+  </ol>
+</section>
+
+<style>
+  .up-next {
+    min-height: 60vh;
+    padding: var(--space-9) var(--space-4);
+    max-width: 1120px;
+    margin-inline: auto;
+    box-sizing: border-box;
+  }
+
+  .up-next__title {
+    margin: 0 0 var(--space-4);
+    font-size: var(--text-lg);
+  }
+
+  .up-next__list {
+    margin: 0;
+    padding-left: var(--space-5);
+    color: var(--color-muted);
+    line-height: 2;
+  }
+</style>

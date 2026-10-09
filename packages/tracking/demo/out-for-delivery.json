@@ -1,0 +1,129 @@
+{
+  "shipmentRef": "demo-out-for-delivery-x7k2",
+  "status": "OUT_FOR_DELIVERY",
+  "headline": "Out for delivery",
+  "summary": "Last scanned at Hyderabad hub, 4 hours ago.",
+  "freshness": {
+    "lastEventAt": "2026-10-12T05:30:00Z",
+    "ageMinutes": 270,
+    "label": "Updated 4 hours ago",
+    "level": "fresh"
+  },
+  "eta": {
+    "from": "2026-10-11T18:00:00Z",
+    "to": "2026-10-12T18:00:00Z",
+    "label": "Expected 11 to 12 Oct"
+  },
+  "steps": [
+    {
+      "key": "ordered",
+      "label": "Ordered",
+      "state": "done",
+      "at": "2026-10-09T05:00:00Z"
+    },
+    {
+      "key": "packed",
+      "label": "Packed",
+      "state": "done",
+      "at": "2026-10-09T12:00:00Z"
+    },
+    {
+      "key": "shipped",
+      "label": "Shipped",
+      "state": "done",
+      "at": "2026-10-09T12:00:00Z"
+    },
+    {
+      "key": "in_transit",
+      "label": "In transit",
+      "state": "done",
+      "at": "2026-10-12T05:30:00Z"
+    },
+    {
+      "key": "out_for_delivery",
+      "label": "Out for delivery",
+      "state": "current"
+    },
+    {
+      "key": "delivered",
+      "label": "Delivered",
+      "state": "upcoming"
+    }
+  ],
+  "route": {
+    "nodes": [
+      {
+        "id": "pune-wh",
+        "name": "Pune warehouse",
+        "city": "Pune",
+        "lat": 18.5204,
+        "lng": 73.8567,
+        "type": "warehouse",
+        "reached": true
+      },
+      {
+        "id": "hyderabad-hub",
+        "name": "Hyderabad hub",
+        "city": "Hyderabad",
+        "lat": 17.385,
+        "lng": 78.4867,
+        "type": "hub",
+        "reached": true
+      },
+      {
+        "id": "hyderabad-delivery",
+        "name": "Hyderabad delivery station",
+        "city": "Hyderabad",
+        "lat": 17.4399,
+        "lng": 78.4983,
+        "type": "delivery",
+        "reached": false
+      }
+    ],
+    "current": {
+      "nodeId": "hyderabad-hub",
+      "lat": 17.385,
+      "lng": 78.4867,
+      "precision": "HUB",
+      "label": "Hyderabad hub"
+    },
+    "estimatedLeg": {
+      "fromNodeId": "hyderabad-hub",
+      "toNodeId": "hyderabad-delivery"
+    }
+  },
+  "timeline": [
+    {
+      "at": "2026-10-12T05:30:00Z",
+      "label": "Out for delivery",
+      "place": "Hyderabad hub",
+      "precision": "HUB"
+    },
+    {
+      "at": "2026-10-11T16:00:00Z",
+      "label": "Arrived at a hub",
+      "place": "Hyderabad hub",
+      "precision": "HUB"
+    },
+    {
+      "at": "2026-10-09T12:00:00Z",
+      "label": "Picked up by the carrier",
+      "place": "Pune warehouse",
+      "precision": "HUB"
+    },
+    {
+      "at": "2026-10-09T05:00:00Z",
+      "label": "Order confirmed",
+      "precision": "NONE"
+    }
+  ],
+  "handler": {
+    "firstName": "Ravi",
+    "role": "Delivery partner",
+    "call": {
+      "enabled": true
+    }
+  },
+  "notices": [],
+  "terminal": false
+}

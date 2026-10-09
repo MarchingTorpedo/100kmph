@@ -1,0 +1,110 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { demoScenarioNames } from '@100kmph/tracking/view-types';
+import Base from '../../layouts/Base.astro';
+import RouteMap from '../../components/RouteMap.astro';
+import Steps from '../../components/Steps.astro';
+import { scenarios } from '../../data/scenarios';
+import { formatTime, levelWord, timelineTag } from '../../lib/format';
+
+export const getStaticPaths = (() => demoScenarioNames.map((scenario) => ({ params: { scenario }, props: { view: scenarios[scenario] } }))) satisfies GetStaticPaths;
+
+const { view } = Astro.props;
+const { freshness, eta, notices, handler } = view;
+---
+
+<Base title="Track your order" description="Where your order is, how recent that information is, and what happens next.">
+  <main class="page">
+    <header class="hero">
+      <p class="eyebrow">Demo shipment {view.shipmentRef}</p>
+      <h1 class="display" data-settle>{view.headline}</h1>
+      <p class="lede">{view.summary}</p>
+      <p class={`chip chip--${freshness.level}`}>
+        <span class="chip__dot" aria-hidden="true"></span>
+        <span><strong>{levelWord[freshness.level]}</strong> · {freshness.label}</span>
+      </p>
+      {
+        eta && (
+          <p class="eta">
+            <span class="eta__k">Expected delivery window</span>
+            <span class="eta__v">{eta.label}</span>
+          </p>
+        )
+      }
+    </header>
+
+    {
+      notices.length > 0 && (
+        <section class="notice" aria-labelledby="notice-h">
+          <h2 id="notice-h" class="notice__h">Notice</h2>
+          {notices.map((n) => <p>{n}</p>)}
+        </section>
+      )
+    }
+
+    <div class="cols">
+      <section aria-labelledby="progress-h" class="block">
+        <h2 id="progress-h">Progress</h2>
+        <Steps steps={view.steps} />
+      </section>
+
+      <section aria-labelledby="route-h" class="block">
+        <h2 id="route-h">Route</h2>
+        <RouteMap route={view.route} />
+      </section>
+    </div>
+
+    {
+      handler && (
+        <section aria-labelledby="handler-h" class="block handler">
+          <h2 id="handler-h">Your delivery contact</h2>
+          <p class="handler__who">
+            <strong>{handler.firstName}</strong>
+            <span>{handler.role}</span>
+          </p>
+          {handler.call.enabled ? (
+            <>
+              <button type="button" class="call press" data-call aria-describedby="call-note">
+                Call {handler.firstName}
+              </button>
+              <p id="call-note" class="handler__note" role="status" data-call-note hidden>
+                Calls go through a masked number (not connected in this demo).
+              </p>
+            </>
+          ) : (
+            <>
+              <button type="button" class="call" aria-disabled="true" aria-describedby="call-reason" data-call>
+                Call {handler.firstName}
+              </button>
+              <p id="call-reason" class="handler__note">
+                {handler.call.reason ?? 'Calling is not available right now.'}
+              </p>
+            </>
+          )}
+        </section>
+      )
+    }
+
+    <section aria-labelledby="history-h" class="block">
+      <h2 id="history-h">History, newest first</h2>
+      <ol class="timeline">
+        {
+          view.timeline.map((t) => (
+            <li class="timeline__item">
+              <time datetime={t.at} class="timeline__time">
+                {formatTime(t.at)}
+              </time>
+              <span class="timeline__label">{t.label}</span>
+              <span class="timeline__meta">
+                {t.place && <span>{t.place}</span>}
+                <span class="tag">{timelineTag[t.precision]}</span>
+              </span>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    <p class="back"><a href="/">All demo scenarios</a></p>
+  </main>
+</Base>

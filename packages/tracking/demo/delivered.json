@@ -1,0 +1,124 @@
+{
+  "shipmentRef": "demo-delivered-x7k2",
+  "status": "DELIVERED",
+  "headline": "Delivered",
+  "summary": "Delivered at Kalyan delivery station on 11 Oct.",
+  "freshness": {
+    "lastEventAt": "2026-10-11T10:30:00Z",
+    "ageMinutes": 1410,
+    "label": "Updated 23 hours ago",
+    "level": "fresh"
+  },
+  "eta": null,
+  "steps": [
+    {
+      "key": "ordered",
+      "label": "Ordered",
+      "state": "done",
+      "at": "2026-10-09T05:00:00Z"
+    },
+    {
+      "key": "packed",
+      "label": "Packed",
+      "state": "done",
+      "at": "2026-10-09T11:00:00Z"
+    },
+    {
+      "key": "shipped",
+      "label": "Shipped",
+      "state": "done",
+      "at": "2026-10-09T11:00:00Z"
+    },
+    {
+      "key": "in_transit",
+      "label": "In transit",
+      "state": "done",
+      "at": "2026-10-11T04:00:00Z"
+    },
+    {
+      "key": "out_for_delivery",
+      "label": "Out for delivery",
+      "state": "done",
+      "at": "2026-10-11T10:30:00Z"
+    },
+    {
+      "key": "delivered",
+      "label": "Delivered",
+      "state": "done",
+      "at": "2026-10-11T10:30:00Z"
+    }
+  ],
+  "route": {
+    "nodes": [
+      {
+        "id": "pune-wh",
+        "name": "Pune warehouse",
+        "city": "Pune",
+        "lat": 18.5204,
+        "lng": 73.8567,
+        "type": "warehouse",
+        "reached": true
+      },
+      {
+        "id": "bhiwandi-hub",
+        "name": "Bhiwandi hub",
+        "city": "Bhiwandi",
+        "lat": 19.2813,
+        "lng": 73.0483,
+        "type": "hub",
+        "reached": true
+      },
+      {
+        "id": "kalyan-delivery",
+        "name": "Kalyan delivery station",
+        "city": "Kalyan",
+        "lat": 19.2403,
+        "lng": 73.1305,
+        "type": "delivery",
+        "reached": true
+      }
+    ],
+    "current": {
+      "nodeId": "kalyan-delivery",
+      "lat": 19.2403,
+      "lng": 73.1305,
+      "precision": "HUB",
+      "label": "Kalyan delivery station"
+    },
+    "estimatedLeg": null
+  },
+  "timeline": [
+    {
+      "at": "2026-10-11T10:30:00Z",
+      "label": "Delivered",
+      "place": "Kalyan delivery station",
+      "precision": "HUB"
+    },
+    {
+      "at": "2026-10-11T04:00:00Z",
+      "label": "Out for delivery",
+      "place": "Bhiwandi hub",
+      "precision": "HUB"
+    },
+    {
+      "at": "2026-10-10T08:00:00Z",
+      "label": "Arrived at a hub",
+      "place": "Bhiwandi hub",
+      "precision": "HUB"
+    },
+    {
+      "at": "2026-10-09T11:00:00Z",
+      "label": "Picked up by the carrier",
+      "place": "Pune warehouse",
+      "precision": "HUB"
+    },
+    {
+      "at": "2026-10-09T05:00:00Z",
+      "label": "Order confirmed",
+      "precision": "NONE"
+    }
+  ],
+  "handler": null,
+  "notices": [],
+  "terminal": true
+}

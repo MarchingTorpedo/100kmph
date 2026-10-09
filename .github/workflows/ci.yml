@@ -41,6 +41,9 @@ jobs:
       # Fails if any page's initial JS exceeds 170 KB gzip (docs/motion-spec.md).
       - name: JS budget
         run: pnpm --filter @100kmph/storefront check:budget
+      # Tracking prototype: demo views must be reproducible and the pages must build.
+      - name: Build tracking app
+        run: pnpm --filter @100kmph/tracking-app build
 
   e2e:
     name: Landing page at phone width (Playwright)

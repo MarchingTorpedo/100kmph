@@ -1,0 +1,32 @@
+---
+import type { TrackingView } from '@100kmph/tracking/view-types';
+import { formatTime } from '../lib/format';
+
+interface Props {
+  steps: TrackingView['steps'];
+}
+const { steps } = Astro.props;
+const stateText = { done: 'Done', current: 'Current step', upcoming: 'Upcoming' } as const;
+---
+
+<ol class="steps">
+  {
+    steps.map((s) => (
+      <li class={`step step--${s.state}`} aria-current={s.state === 'current' ? 'step' : undefined}>
+        <span class="step__dot" aria-hidden="true">{s.state === 'done' ? '✓' : ''}</span>
+        <span class="step__body">
+          <span class="step__label">{s.label}</span>
+          <span class="step__state">
+            {stateText[s.state]}
+            {s.at && (
+              <>
+                {' · '}
+                <time datetime={s.at}>{formatTime(s.at)}</time>
+              </>
+            )}
+          </span>
+        </span>
+      </li>
+    ))
+  }
+</ol>

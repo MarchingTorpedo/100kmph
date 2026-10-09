@@ -1,0 +1,152 @@
+{
+  "shipmentRef": "demo-on-time-x7k2",
+  "status": "IN_TRANSIT",
+  "headline": "In transit",
+  "summary": "Last scanned at Surat hub, 3 hours ago.",
+  "freshness": {
+    "lastEventAt": "2026-10-12T07:00:00Z",
+    "ageMinutes": 180,
+    "label": "Updated 3 hours ago",
+    "level": "fresh"
+  },
+  "eta": {
+    "from": "2026-10-14T12:00:00Z",
+    "to": "2026-10-15T12:00:00Z",
+    "label": "Expected 14 to 15 Oct"
+  },
+  "steps": [
+    {
+      "key": "ordered",
+      "label": "Ordered",
+      "state": "done",
+      "at": "2026-10-10T04:00:00Z"
+    },
+    {
+      "key": "packed",
+      "label": "Packed",
+      "state": "done",
+      "at": "2026-10-10T13:00:00Z"
+    },
+    {
+      "key": "shipped",
+      "label": "Shipped",
+      "state": "done",
+      "at": "2026-10-10T13:00:00Z"
+    },
+    {
+      "key": "in_transit",
+      "label": "In transit",
+      "state": "current"
+    },
+    {
+      "key": "out_for_delivery",
+      "label": "Out for delivery",
+      "state": "upcoming"
+    },
+    {
+      "key": "delivered",
+      "label": "Delivered",
+      "state": "upcoming"
+    }
+  ],
+  "route": {
+    "nodes": [
+      {
+        "id": "pune-wh",
+        "name": "Pune warehouse",
+        "city": "Pune",
+        "lat": 18.5204,
+        "lng": 73.8567,
+        "type": "warehouse",
+        "reached": true
+      },
+      {
+        "id": "bhiwandi-hub",
+        "name": "Bhiwandi hub",
+        "city": "Bhiwandi",
+        "lat": 19.2813,
+        "lng": 73.0483,
+        "type": "hub",
+        "reached": true
+      },
+      {
+        "id": "surat-hub",
+        "name": "Surat hub",
+        "city": "Surat",
+        "lat": 21.1702,
+        "lng": 72.8311,
+        "type": "hub",
+        "reached": true
+      },
+      {
+        "id": "indore-hub",
+        "name": "Indore hub",
+        "city": "Indore",
+        "lat": 22.7196,
+        "lng": 75.8577,
+        "type": "hub",
+        "reached": false
+      },
+      {
+        "id": "jaipur-delivery",
+        "name": "Jaipur delivery station",
+        "city": "Jaipur",
+        "lat": 26.8851,
+        "lng": 75.8049,
+        "type": "delivery",
+        "reached": false
+      }
+    ],
+    "current": {
+      "nodeId": "surat-hub",
+      "lat": 21.1702,
+      "lng": 72.8311,
+      "precision": "HUB",
+      "label": "Surat hub"
+    },
+    "estimatedLeg": {
+      "fromNodeId": "surat-hub",
+      "toNodeId": "indore-hub"
+    }
+  },
+  "timeline": [
+    {
+      "at": "2026-10-12T07:00:00Z",
+      "label": "In transit",
+      "place": "Surat hub",
+      "precision": "HUB"
+    },
+    {
+      "at": "2026-10-11T19:00:00Z",
+      "label": "Arrived at a hub",
+      "place": "Surat hub",
+      "precision": "HUB"
+    },
+    {
+      "at": "2026-10-11T05:00:00Z",
+      "label": "In transit",
+      "place": "Bhiwandi hub",
+      "precision": "HUB"
+    },
+    {
+      "at": "2026-10-11T02:30:00Z",
+      "label": "Arrived at a hub",
+      "place": "Bhiwandi hub",
+      "precision": "HUB"
+    },
+    {
+      "at": "2026-10-10T13:00:00Z",
+      "label": "Picked up by the carrier",
+      "place": "Pune warehouse",
+      "precision": "HUB"
+    },
+    {
+      "at": "2026-10-10T04:00:00Z",
+      "label": "Order confirmed",
+      "precision": "NONE"
+    }
+  ],
+  "handler": null,
+  "notices": [],
+  "terminal": false
+}

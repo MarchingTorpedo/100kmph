@@ -33,6 +33,25 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3
 
+  apps/tracking:
+    dependencies:
+      '@100kmph/design':
+        specifier: workspace:*
+        version: link:../../packages/design
+      '@100kmph/tracking':
+        specifier: workspace:*
+        version: link:../../packages/tracking
+      astro:
+        specifier: ^7.3.8
+        version: 7.3.8(@types/node@26.6.5)(yaml@2.9.1)
+    devDependencies:
+      '@astrojs/check':
+        specifier: ^0.9.10
+        version: 0.9.10(@emnapi/runtime@1.11.3)(prettier@3.9.9)(typescript@6.0.3)
+      typescript:
+        specifier: ^6.0.3
+        version: 6.0.3
+
   packages/design:
     devDependencies:
       '@types/node':
@@ -41,6 +60,18 @@ importers:
       jsdom:
         specifier: ^30.1.2
         version: 30.1.2
+      typescript:
+        specifier: ^7.0.2
+        version: 7.0.2
+      vitest:
+        specifier: ^5.0.3
+        version: 5.0.3(@types/node@26.6.5)(jsdom@30.1.2)(vite@8.3.4(@types/node@26.6.5)(yaml@2.9.1))
+
+  packages/tracking:
+    devDependencies:
+      '@types/node':
+        specifier: ^26.6.5
+        version: 26.6.5
       typescript:
         specifier: ^7.0.2
         version: 7.0.2

@@ -1,0 +1,145 @@
+{
+  "shipmentRef": "demo-returning-x7k2",
+  "status": "RTO_INITIATED",
+  "headline": "Returning to the seller",
+  "summary": "Last scanned at Indore hub, 4 hours ago.",
+  "freshness": {
+    "lastEventAt": "2026-10-12T06:00:00Z",
+    "ageMinutes": 240,
+    "label": "Updated 4 hours ago",
+    "level": "fresh"
+  },
+  "eta": null,
+  "steps": [
+    {
+      "key": "ordered",
+      "label": "Ordered",
+      "state": "done",
+      "at": "2026-10-07T05:00:00Z"
+    },
+    {
+      "key": "packed",
+      "label": "Packed",
+      "state": "done",
+      "at": "2026-10-07T12:00:00Z"
+    },
+    {
+      "key": "shipped",
+      "label": "Shipped",
+      "state": "done",
+      "at": "2026-10-07T12:00:00Z"
+    },
+    {
+      "key": "in_transit",
+      "label": "In transit",
+      "state": "done",
+      "at": "2026-10-10T09:00:00Z"
+    },
+    {
+      "key": "out_for_delivery",
+      "label": "Out for delivery",
+      "state": "upcoming"
+    },
+    {
+      "key": "delivered",
+      "label": "Delivered",
+      "state": "upcoming"
+    }
+  ],
+  "route": {
+    "nodes": [
+      {
+        "id": "pune-wh",
+        "name": "Pune warehouse",
+        "city": "Pune",
+        "lat": 18.5204,
+        "lng": 73.8567,
+        "type": "warehouse",
+        "reached": true
+      },
+      {
+        "id": "bhiwandi-hub",
+        "name": "Bhiwandi hub",
+        "city": "Bhiwandi",
+        "lat": 19.2813,
+        "lng": 73.0483,
+        "type": "hub",
+        "reached": true
+      },
+      {
+        "id": "surat-hub",
+        "name": "Surat hub",
+        "city": "Surat",
+        "lat": 21.1702,
+        "lng": 72.8311,
+        "type": "hub",
+        "reached": true
+      },
+      {
+        "id": "indore-hub",
+        "name": "Indore hub",
+        "city": "Indore",
+        "lat": 22.7196,
+        "lng": 75.8577,
+        "type": "hub",
+        "reached": true
+      }
+    ],
+    "current": {
+      "nodeId": "indore-hub",
+      "lat": 22.7196,
+      "lng": 75.8577,
+      "precision": "HUB",
+      "label": "Indore hub"
+    },
+    "estimatedLeg": null
+  },
+  "timeline": [
+    {
+      "at": "2026-10-12T06:00:00Z",
+      "label": "In transit (return)",
+      "place": "Indore hub",
+      "precision": "HUB"
+    },
+    {
+      "at": "2026-10-11T12:00:00Z",
+      "label": "Returning to the seller",
+      "place": "Indore hub",
+      "precision": "HUB"
+    },
+    {
+      "at": "2026-10-10T09:00:00Z",
+      "label": "Delivery attempt did not complete",
+      "place": "Indore hub",
+      "precision": "HUB"
+    },
+    {
+      "at": "2026-10-08T20:00:00Z",
+      "label": "In transit",
+      "place": "Surat hub",
+      "precision": "HUB"
+    },
+    {
+      "at": "2026-10-08T09:00:00Z",
+      "label": "Arrived at a hub",
+      "place": "Bhiwandi hub",
+      "precision": "HUB"
+    },
+    {
+      "at": "2026-10-07T12:00:00Z",
+      "label": "Picked up by the carrier",
+      "place": "Pune warehouse",
+      "precision": "HUB"
+    },
+    {
+      "at": "2026-10-07T05:00:00Z",
+      "label": "Order confirmed",
+      "precision": "NONE"
+    }
+  ],
+  "handler": null,
+  "notices": [
+    "This parcel is on its way back to the seller."
+  ],
+  "terminal": false
+}

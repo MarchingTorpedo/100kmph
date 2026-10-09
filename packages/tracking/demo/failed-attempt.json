@@ -1,0 +1,128 @@
+{
+  "shipmentRef": "demo-failed-attempt-x7k2",
+  "status": "ATTEMPT_FAILED",
+  "headline": "Delivery attempt did not complete",
+  "summary": "Last scanned at Jaipur delivery station, 3 hours ago.",
+  "freshness": {
+    "lastEventAt": "2026-10-12T07:00:00Z",
+    "ageMinutes": 180,
+    "label": "Updated 3 hours ago",
+    "level": "fresh"
+  },
+  "eta": {
+    "from": "2026-10-11T18:00:00Z",
+    "to": "2026-10-12T18:00:00Z",
+    "label": "Expected 11 to 12 Oct"
+  },
+  "steps": [
+    {
+      "key": "ordered",
+      "label": "Ordered",
+      "state": "done",
+      "at": "2026-10-08T05:00:00Z"
+    },
+    {
+      "key": "packed",
+      "label": "Packed",
+      "state": "done",
+      "at": "2026-10-08T12:00:00Z"
+    },
+    {
+      "key": "shipped",
+      "label": "Shipped",
+      "state": "done",
+      "at": "2026-10-08T12:00:00Z"
+    },
+    {
+      "key": "in_transit",
+      "label": "In transit",
+      "state": "done",
+      "at": "2026-10-12T03:30:00Z"
+    },
+    {
+      "key": "out_for_delivery",
+      "label": "Out for delivery",
+      "state": "current"
+    },
+    {
+      "key": "delivered",
+      "label": "Delivered",
+      "state": "upcoming"
+    }
+  ],
+  "route": {
+    "nodes": [
+      {
+        "id": "pune-wh",
+        "name": "Pune warehouse",
+        "city": "Pune",
+        "lat": 18.5204,
+        "lng": 73.8567,
+        "type": "warehouse",
+        "reached": true
+      },
+      {
+        "id": "jaipur-hub",
+        "name": "Jaipur hub",
+        "city": "Jaipur",
+        "lat": 26.9124,
+        "lng": 75.7873,
+        "type": "hub",
+        "reached": true
+      },
+      {
+        "id": "jaipur-delivery",
+        "name": "Jaipur delivery station",
+        "city": "Jaipur",
+        "lat": 26.8851,
+        "lng": 75.8049,
+        "type": "delivery",
+        "reached": true
+      }
+    ],
+    "current": {
+      "nodeId": "jaipur-delivery",
+      "lat": 26.8851,
+      "lng": 75.8049,
+      "precision": "HUB",
+      "label": "Jaipur delivery station"
+    },
+    "estimatedLeg": null
+  },
+  "timeline": [
+    {
+      "at": "2026-10-12T07:00:00Z",
+      "label": "Delivery attempt did not complete",
+      "place": "Jaipur delivery station",
+      "precision": "HUB"
+    },
+    {
+      "at": "2026-10-12T03:30:00Z",
+      "label": "Out for delivery",
+      "place": "Jaipur hub",
+      "precision": "HUB"
+    },
+    {
+      "at": "2026-10-11T14:00:00Z",
+      "label": "Arrived at a hub",
+      "place": "Jaipur hub",
+      "precision": "HUB"
+    },
+    {
+      "at": "2026-10-08T12:00:00Z",
+      "label": "Picked up by the carrier",
+      "place": "Pune warehouse",
+      "precision": "HUB"
+    },
+    {
+      "at": "2026-10-08T05:00:00Z",
+      "label": "Order confirmed",
+      "precision": "NONE"
+    }
+  ],
+  "handler": null,
+  "notices": [
+    "Delivery was attempted but did not complete."
+  ],
+  "terminal": false
+}

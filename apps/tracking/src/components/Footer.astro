@@ -1,0 +1,15 @@
+---
+// Motion toggle pattern copied from the storefront footer (wired in scripts/track.ts).
+---
+
+<footer class="site-footer">
+  <p class="site-footer__note">Demo data. Positions are as accurate as the last scan.</p>
+  <div class="site-footer__motion">
+    <button type="button" class="site-footer__toggle press" aria-pressed="false" aria-describedby="motion-note" data-motion-toggle>
+      Reduce motion
+    </button>
+    <span id="motion-note" class="site-footer__hint" role="status" data-motion-note hidden
+      >Motion is already reduced by your device settings.</span
+    >
+  </div>
+</footer>

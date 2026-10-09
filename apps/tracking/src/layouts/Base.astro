@@ -1,0 +1,38 @@
+---
+import { motionBootScript } from '@100kmph/design/boot';
+import archivoText from '@100kmph/design/fonts/archivo-text-latin.woff2?url';
+import '@100kmph/design/styles/tokens.css';
+import '@100kmph/design/styles/fonts.css';
+import '@100kmph/design/styles/base.css';
+import '../styles/tracking.css';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  title: string;
+  description: string;
+}
+const { title, description } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en-IN" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="robots" content="noindex" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="theme-color" content="#E8EBEF" />
+    <!-- Sets data-motion / data-lite before first paint (see @100kmph/design motion.ts). -->
+    <script is:inline set:html={motionBootScript} />
+    <link rel="preload" href={archivoText} as="font" type="font/woff2" crossorigin />
+  </head>
+  <body>
+    <slot />
+    <Footer />
+    <script>
+      import '../scripts/track.ts';
+    </script>
+  </body>
+</html>

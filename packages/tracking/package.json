@@ -1,0 +1,23 @@
+{
+  "name": "@100kmph/tracking",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Shipment tracking core: carrier events to the customer-facing view (see docs/security.md and docs/launch-checklist.md)",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./view-types": "./src/view-types.ts",
+    "./demo/*": "./demo/*"
+  },
+  "scripts": {
+    "demo:emit": "node scripts/emit-demo.ts",
+    "check": "node scripts/emit-demo.ts --check",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.3"
+  }
+}

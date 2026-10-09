@@ -1,0 +1,27 @@
+---
+import Base from '../layouts/Base.astro';
+import { demoScenarioNames } from '@100kmph/tracking/view-types';
+import { scenarios } from '../data/scenarios';
+
+const pretty = (name: string) => name.charAt(0).toUpperCase() + name.slice(1).replaceAll('-', ' ');
+---
+
+<Base title="Track your order: demo scenarios" description="Demo scenarios for the 100kmph order tracking page. All data is made up.">
+  <main class="page">
+    <h1 class="display" data-settle>Track your order</h1>
+    <p class="lede">Demo scenarios. Every shipment, city scan and name here is made up. Pick one to see how the tracking page reads.</p>
+    <ul class="scenario-list">
+      {
+        demoScenarioNames.map((name) => (
+          <li>
+            <a href={`/track/${name}`} class="scenario-list__link">
+              <span class="scenario-list__name">{pretty(name)}</span>
+              <span class="scenario-list__headline">{scenarios[name].headline}</span>
+              <span class="scenario-list__ref">Demo ref {scenarios[name].shipmentRef}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </main>
+</Base>

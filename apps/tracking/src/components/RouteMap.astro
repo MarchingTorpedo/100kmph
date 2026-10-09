@@ -1,0 +1,266 @@
+---
+// Schematic route: an equirectangular projection of the nodes onto a plain
+// grid. Deliberately NO country, state or coastline outlines, and no tiles.
+import type { TrackingView } from '@100kmph/tracking/view-types';
+import { precisionTag } from '../lib/format';
+
+interface Props {
+  route: TrackingView['route'];
+}
+const { route } = Astro.props;
+const { nodes, current, estimatedLeg } = route;
+
+const W = 328;
+const H = 320;
+const PAD = { l: 28, r: 28, t: 40, b: 56 };
+
+const pts = [...nodes.map((n) => ({ lat: n.lat, lng: n.lng })), ...(current ? [{ lat: current.lat, lng: current.lng }] : [])];
+const lats = pts.map((p) => p.lat);
+const lngs = pts.map((p) => p.lng);
+const minLat = Math.min(...lats);
+const maxLat = Math.max(...lats);
+const minLng = Math.min(...lngs);
+const maxLng = Math.max(...lngs);
+const midLat = (minLat + maxLat) / 2;
+const kx = Math.cos((midLat * Math.PI) / 180); // equirectangular, true to the middle latitude
+const dx = Math.max((maxLng - minLng) * kx, 1e-6);
+const dy = Math.max(maxLat - minLat, 1e-6);
+const innerW = W - PAD.l - PAD.r;
+const innerH = H - PAD.t - PAD.b;
+const scale = Math.min(innerW / dx, innerH / dy);
+const offX = PAD.l + (innerW - dx * scale) / 2;
+const offY = PAD.t + (innerH - dy * scale) / 2;
+
+const px = (lng: number) => offX + (lng - minLng) * kx * scale;
+const py = (lat: number) => offY + (maxLat - lat) * scale;
+const r1 = (n: number) => Math.round(n * 10) / 10;
+
+// Grid: whole-degree lines, thinned so lines stay at least ~44 px apart.
+const degPx = scale * Math.min(1, kx);
+const step = [1, 2, 5, 10, 20].find((s) => s * degPx >= 44) ?? 20;
+const vLines: number[] = [];
+const hLines: number[] = [];
+const lngLo = minLng - offX / (kx * scale);
+const lngHi = minLng + (W - offX) / (kx * scale);
+const latHi = maxLat + offY / scale;
+const latLo = maxLat - (H - offY) / scale;
+for (let g = Math.ceil(lngLo); g <= lngHi; g++) if (g % step === 0) vLines.push(r1(px(g)));
+for (let g = Math.ceil(latLo); g <= latHi; g++) if (g % step === 0) hLines.push(r1(py(g)));
+
+const P = nodes.map((n) => ({ ...n, x: r1(px(n.lng)), y: r1(py(n.lat)) }));
+const byId = new Map(P.map((n) => [n.id, n]));
+const isEst = (a: string, b: string) => !!estimatedLeg && ((estimatedLeg.fromNodeId === a && estimatedLeg.toNodeId === b) || (estimatedLeg.fromNodeId === b && estimatedLeg.toNodeId === a));
+
+let doneD = '';
+let lastEnd = '';
+const pendingSegs: string[] = [];
+for (let i = 0; i < P.length - 1; i++) {
+  const a = P[i]!;
+  const b = P[i + 1]!;
+  if (isEst(a.id, b.id)) continue;
+  if (a.reached && b.reached) {
+    const start = `${a.x} ${a.y}`;
+    doneD += `${lastEnd === start ? '' : ` M${start}`} L${b.x} ${b.y}`;
+    lastEnd = `${b.x} ${b.y}`;
+  }
+  else pendingSegs.push(`M${a.x} ${a.y} L${b.x} ${b.y}`);
+}
+const from = estimatedLeg ? byId.get(estimatedLeg.fromNodeId) : undefined;
+const to = estimatedLeg ? byId.get(estimatedLeg.toNodeId) : undefined;
+const estD = from && to ? `M${from.x} ${from.y} L${to.x} ${to.y}` : '';
+const est = from && to ? { x: r1((from.x + to.x) / 2), y: r1((from.y + to.y) / 2) } : null;
+
+const cur = current ? { x: r1(px(current.lng)), y: r1(py(current.lat)) } : null;
+const markerLabel = current ? precisionTag[current.precision] : '';
+
+// Label placement: greedy, tries right/left/above/below of each point and takes
+// the first spot that stays inside the map and clear of other labels and dots.
+type Box = { x0: number; y0: number; x1: number; y1: number };
+const placed: Box[] = [];
+const FS = 14;
+const textW = (t: string) => Math.ceil(t.length * 8.2) + 4;
+const hit = (a: Box, b: Box) => a.x0 < b.x1 && a.x1 > b.x0 && a.y0 < b.y1 && a.y1 > b.y0;
+const dots: Box[] = [];
+for (const n of P) dots.push({ x0: n.x - 8, y0: n.y - 8, x1: n.x + 8, y1: n.y + 8 });
+if (cur) dots.push({ x0: cur.x - 12, y0: cur.y - 12, x1: cur.x + 12, y1: cur.y + 12 });
+function place(text: string, x: number, y: number, prefer: Array<'r' | 'l' | 'a' | 'b'> = ['r', 'l', 'a', 'b']) {
+  const w = textW(text);
+  const tries = prefer.flatMap((side) => {
+    const off = side === 'r' ? 14 : side === 'l' ? 14 : 16;
+    const c: Array<{ ax: number; ay: number; anchor: 'start' | 'end' | 'middle' }> = [];
+    if (side === 'r') c.push({ ax: x + off, ay: y + 5, anchor: 'start' });
+    if (side === 'l') c.push({ ax: x - off, ay: y + 5, anchor: 'end' });
+    if (side === 'a') for (const dyy of [0, -14]) c.push({ ax: x, ay: y - off + dyy, anchor: 'middle' });
+    if (side === 'b') for (const dyy of [0, 14]) c.push({ ax: x, ay: y + off + 12 + dyy, anchor: 'middle' });
+    return c;
+  });
+  const boxOf = (t: { ax: number; ay: number; anchor: string }): Box => {
+    const x0 = t.anchor === 'start' ? t.ax : t.anchor === 'end' ? t.ax - w : t.ax - w / 2;
+    return { x0, x1: x0 + w, y0: t.ay - FS + 2, y1: t.ay + 4 };
+  };
+  const inside = (b: Box) => b.x0 >= 4 && b.x1 <= W - 4 && b.y0 >= 4 && b.y1 <= H - 4;
+  const ok = (b: Box) => inside(b) && !placed.some((q) => hit(b, q)) && !dots.some((q) => hit(b, q));
+  // Also try sliding a centred label sideways to fit, before giving up.
+  const slid = tries.flatMap((t) => (t.anchor === 'middle' ? [-60, -30, 30, 60].map((s) => ({ ...t, ax: t.ax + s })) : []));
+  const pick = tries.find((t) => ok(boxOf(t))) ?? slid.find((t) => ok(boxOf(t))) ?? tries.find((t) => inside(boxOf(t))) ?? tries[0]!;
+  // Last resort: clamp into the map so nothing is ever clipped.
+  const b = boxOf(pick);
+  const shift = b.x0 < 4 ? 4 - b.x0 : b.x1 > W - 4 ? W - 4 - b.x1 : 0;
+  const final = { ...pick, ax: pick.ax + shift };
+  placed.push(boxOf(final));
+  return final;
+}
+// Estimated-route label first (it is the one that explains the dashes), then marker, then cities.
+// One label per place: a later node in the same city within 30 px shares the earlier label.
+const dupOf = P.map((n, i) => P.slice(0, i).some((m) => m.city === n.city && Math.hypot(m.x - n.x, m.y - n.y) < 30));
+const labelPos = P.map((n, i) => (dupOf[i] ? null : place(n.city, n.x, n.y, ['r', 'l', 'a', 'b'])));
+const markerPos = cur ? place(markerLabel, cur.x, cur.y, ['b', 'l', 'r', 'a']) : null;
+const estLabel = est ? place('Estimated route', est.x, est.y - 6, ['a', 'b']) : null;
+
+const reachedCount = nodes.filter((n) => n.reached).length;
+const first = nodes[0]!;
+const last = nodes[nodes.length - 1]!;
+const currentPlace = current ? `${current.label}, ${markerLabel}` : 'no position yet';
+const aria =
+  `Schematic route from ${first.city} to ${last.city}, not to scale. ${reachedCount} of ${nodes.length} stops reached. ` +
+  `Last known position: ${currentPlace}.` +
+  (estimatedLeg && from && to ? ` The leg from ${from.city} to ${to.city} is estimated, with no position data.` : '');
+---
+
+<figure class="map">
+  <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={aria} class="map__svg">
+    <g class="map__grid" aria-hidden="true">
+      {vLines.map((x) => <line x1={x} y1="0" x2={x} y2={H} />)}
+      {hLines.map((y) => <line x1="0" y1={y} x2={W} y2={y} />)}
+    </g>
+    {pendingSegs.map((d) => <path d={d} class="map__pending" />)}
+    {estD && <path d={estD} class="map__estimated" />}
+    {doneD && <path d={doneD} class="map__done" pathLength="1" />}
+    {
+      est && (
+        <text x={estLabel!.ax} y={estLabel!.ay} text-anchor={estLabel!.anchor} class="map__label map__label--est">
+          Estimated route
+        </text>
+      )
+    }
+    {
+      P.map((n, i) => (
+        <g>
+          <circle cx={n.x} cy={n.y} r="6" class:list={['map__node', { 'map__node--reached': n.reached }]} />
+          {labelPos[i] && (
+            <text x={labelPos[i]!.ax} y={labelPos[i]!.ay} text-anchor={labelPos[i]!.anchor} class="map__label">
+              {n.city}
+            </text>
+          )}
+        </g>
+      ))
+    }
+    {
+      cur && current && markerPos && (
+        <g>
+          <circle cx={cur.x} cy={cur.y} r="10" class="map__marker" />
+          <text x={markerPos.ax} y={markerPos.ay} text-anchor={markerPos.anchor} class="map__label map__label--marker">
+            {markerLabel}
+          </text>
+        </g>
+      )
+    }
+  </svg>
+  <figcaption class="map__legend">
+    Not to scale. No borders are drawn.
+    <span>Filled dot: reached. Ring: last known position.</span>
+    {estD && <span>Dashed line: estimated route, no position data.</span>}
+    {!current && <span>No position yet.</span>}
+  </figcaption>
+</figure>
+
+<style>
+  .map {
+    margin: 0;
+  }
+  .map__svg {
+    display: block;
+    width: 100%;
+    max-width: 36rem;
+    height: auto;
+    background: var(--color-surface);
+    border-radius: var(--radius-control);
+  }
+  .map__grid line {
+    stroke: var(--color-ground);
+    stroke-width: 1;
+  }
+  .map__pending {
+    fill: none;
+    stroke: var(--color-muted);
+    stroke-width: 2;
+    opacity: 0.45;
+  }
+  .map__estimated {
+    fill: none;
+    stroke: var(--color-route);
+    stroke-width: 3;
+    stroke-dasharray: 8 7;
+  }
+  .map__done {
+    fill: none;
+    stroke: var(--color-route);
+    stroke-width: 4;
+    stroke-linejoin: round;
+  }
+  .map__node {
+    fill: var(--color-surface);
+    stroke: var(--color-muted);
+    stroke-width: 2.5;
+  }
+  .map__node--reached {
+    fill: var(--color-route);
+    stroke: var(--color-route);
+  }
+  .map__marker {
+    fill: var(--color-milestone-fill);
+    stroke: var(--color-ink);
+    stroke-width: 3;
+  }
+  .map__label {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 700;
+    fill: var(--color-ink);
+    paint-order: stroke;
+    stroke: var(--color-surface);
+    stroke-width: 4px;
+    stroke-linejoin: round;
+  }
+  .map__label--est {
+    fill: var(--color-route);
+  }
+  .map__label--marker {
+    font-weight: 600;
+  }
+  .map__legend {
+    margin-top: var(--space-2);
+    font-size: var(--text-xs);
+    color: var(--color-muted);
+  }
+  .map__legend span {
+    display: block;
+  }
+
+  /* Route line draws once on load, `slow`. Only where motion is allowed.
+     stroke-dashoffset is the one non-transform/opacity property, as on the storefront gauge. */
+  @media (prefers-reduced-motion: no-preference) {
+    :global(:root:not([data-motion='reduced']):not([data-lite])) .map__done {
+      stroke-dasharray: 1;
+      animation: route-draw var(--duration-slow) var(--ease-settle) both;
+    }
+  }
+  @keyframes route-draw {
+    from {
+      stroke-dashoffset: 1;
+    }
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+</style>

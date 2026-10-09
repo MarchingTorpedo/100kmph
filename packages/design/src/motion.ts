@@ -31,6 +31,8 @@ export function getMotionPreference(): MotionPreference {
   }
 }
 
+const CHANGE_EVENT = '100kmph:motionchange';
+
 export function setMotionPreference(pref: MotionPreference, root: HTMLElement = document.documentElement): void {
   try {
     if (pref === 'system') localStorage.removeItem(PREF_KEY);
@@ -39,7 +41,47 @@ export function setMotionPreference(pref: MotionPreference, root: HTMLElement = 
     // Not persisted; still applied below for this page view.
   }
   applyMotionAttributes(root, detectMotion(pref));
+  window.dispatchEvent(new CustomEvent(CHANGE_EVENT, { detail: pref }));
 }
+
+/**
+ * Calls `cb` with the new environment when the footer toggle or the OS
+ * reduced-motion setting changes. `pref` is passed through because storage
+ * may be blocked, in which case re-reading it would lose the choice.
+ * Returns an unsubscribe function.
+ */
+export function onMotionChange(cb: (env: MotionEnv) => void, win: Window = window): () => void {
+  let pref = getMotionPreference();
+  const fire = () => {
+    const env = detectMotion(pref, win);
+    applyMotionAttributes(win.document.documentElement, env);
+    cb(env);
+  };
+  const onToggle = (e: Event) => {
+    pref = (e as CustomEvent<MotionPreference>).detail;
+    fire();
+  };
+  const mq = win.matchMedia?.('(prefers-reduced-motion: reduce)');
+  mq?.addEventListener('change', fire);
+  win.addEventListener(CHANGE_EVENT, onToggle);
+  return () => {
+    mq?.removeEventListener('change', fire);
+    win.removeEventListener(CHANGE_EVENT, onToggle);
+  };
+}
+
+/**
+ * Inline <head> script that sets the same attributes as
+ * `applyMotionAttributes(detectMotion())` before first paint, so a saved
+ * "reduce motion" choice never flashes animation. Kept in sync with
+ * detectMotion by test/motion.test.ts.
+ */
+export const motionBootScript =
+  `(function(){var d=document.documentElement,n=navigator,c=n.connection,m=window.matchMedia,` +
+  `r=!!m&&m("(prefers-reduced-motion: reduce)").matches;` +
+  `try{r=r||localStorage.getItem(${JSON.stringify(PREF_KEY)})==="reduced"}catch(e){}` +
+  `if(r)d.dataset.motion="reduced";` +
+  `if(c&&(c.saveData===true||c.effectiveType==="2g"||c.effectiveType==="slow-2g")||n.deviceMemory<=2)d.dataset.lite=""})()`;
 
 export function detectMotion(pref: MotionPreference = getMotionPreference(), win: Window = window): MotionEnv {
   const nav = win.navigator as NavigatorLike;

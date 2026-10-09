@@ -7,6 +7,8 @@ import {
   cubicBezier,
   detectMotion,
   getMotionPreference,
+  motionBootScript,
+  onMotionChange,
   setMotionPreference,
   staggerDelay,
   stripMotion,
@@ -146,5 +148,61 @@ describe('cubicBezier', () => {
       prev = y;
     }
     expect(brakeEase(1)).toBe(1);
+  });
+});
+
+describe('motionBootScript', () => {
+  const cases = [
+    { reduce: false, stored: null, saveData: false, effectiveType: '4g', deviceMemory: 8 },
+    { reduce: true, stored: null, saveData: false, effectiveType: '4g', deviceMemory: 8 },
+    { reduce: false, stored: 'reduced', saveData: false, effectiveType: '4g', deviceMemory: 8 },
+    { reduce: false, stored: null, saveData: true, effectiveType: '4g', deviceMemory: 8 },
+    { reduce: false, stored: null, saveData: false, effectiveType: 'slow-2g', deviceMemory: 8 },
+    { reduce: false, stored: null, saveData: false, effectiveType: '3g', deviceMemory: 2 },
+    { reduce: true, stored: 'reduced', saveData: true, effectiveType: '2g', deviceMemory: 1 },
+    { reduce: false, stored: null, saveData: undefined, effectiveType: undefined, deviceMemory: undefined },
+  ];
+
+  it.each(cases)('agrees with detectMotion for %o', (c) => {
+    const root = document.documentElement;
+    delete root.dataset.motion;
+    delete root.dataset.lite;
+    if (c.stored) localStorage.setItem('100kmph:motion', c.stored);
+    window.matchMedia = ((q: string) => ({ matches: q.includes('reduce') && c.reduce })) as typeof window.matchMedia;
+    Object.defineProperty(navigator, 'connection', {
+      value: { saveData: c.saveData, effectiveType: c.effectiveType },
+      configurable: true,
+    });
+    Object.defineProperty(navigator, 'deviceMemory', { value: c.deviceMemory, configurable: true });
+
+    new Function(motionBootScript)();
+    const expected = detectMotion();
+    expect(root.dataset.motion === 'reduced').toBe(expected.reducedMotion);
+    expect(root.hasAttribute('data-lite')).toBe(expected.lite);
+  });
+});
+
+describe('onMotionChange', () => {
+  it('fires with the new environment when the footer toggle changes', () => {
+    window.matchMedia = (() => ({ matches: false, addEventListener() {}, removeEventListener() {} })) as unknown as typeof window.matchMedia;
+    const seen: boolean[] = [];
+    const off = onMotionChange((env) => seen.push(env.reducedMotion));
+    setMotionPreference('reduced');
+    setMotionPreference('system');
+    off();
+    setMotionPreference('reduced');
+    expect(seen).toEqual([true, false]);
+  });
+
+  it('keeps the toggle choice when storage is blocked', () => {
+    window.matchMedia = (() => ({ matches: false, addEventListener() {}, removeEventListener() {} })) as unknown as typeof window.matchMedia;
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new Error('blocked');
+    });
+    const seen: boolean[] = [];
+    const off = onMotionChange((env) => seen.push(env.reducedMotion));
+    setMotionPreference('reduced');
+    off();
+    expect(seen).toEqual([true]);
   });
 });

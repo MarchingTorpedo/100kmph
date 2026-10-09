@@ -79,7 +79,8 @@ export function velocityWidth(headings: HTMLElement[], opts: VelocityWidthOption
   let applied = Math.round(width * 2) / 2;
   let target: number = fontWidth.rest;
   let mode: 'rest' | 'follow' | 'brake' = 'rest';
-  let lastY = win.scrollY;
+  // Read lazily: reading scrollY at startup forces a synchronous layout.
+  let lastY: number | undefined;
   let lastT = 0;
   let lastMoveAt = 0;
   let brakeFrom = width;
@@ -90,7 +91,7 @@ export function velocityWidth(headings: HTMLElement[], opts: VelocityWidthOption
     const dt = lastT ? now - lastT : 16;
     lastT = now;
     const y = win.scrollY;
-    const dy = y - lastY;
+    const dy = y - (lastY ?? y);
     lastY = y;
 
     if (dy !== 0) {
@@ -126,6 +127,7 @@ export function velocityWidth(headings: HTMLElement[], opts: VelocityWidthOption
   };
 
   const onScroll = () => {
+    lastY ??= win.scrollY;
     if (!raf) raf = win.requestAnimationFrame(frame);
   };
   win.addEventListener('scroll', onScroll, { passive: true });
